@@ -3,49 +3,177 @@
   <head>
     <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
     <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
+    <!-- Add Highcharts scripts for charting -->
+    <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+    <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
+    <script src="https://usetrmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
   </head>
   <body class="environment trmnl">
     <div class="screen">
       <div class="view view--full">
-        <table class="table" data-table-limit="true">
-          <thead>
-            <tr>
-              <th>
-                <span class="title">Hour</span>
-              </th>
-              <th>
-                <span class="title">Electricity</span>
-              </th>
-              <th>
-                <span class="title">Gas</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+        <div class="layout layout--col gap--space-between">
+          <!-- Metrics section: Adapt to show energy stats -->
+          <div class="grid">
+            <div class="row">
+              <div class="grid">
+                <div class="item col--span-2">
+                  <div class="meta"></div>
+                  <div class="content">
+                    <span class="value value--large value--tnums">€{{ electricity | map: 'total_price' | sum | round: 2 }}</span>
+                    <span class="label">Total Electricity (24h)</span>
+                  </div>
+                </div>
+                <div class="item col--span-1">
+                  <div class="meta"></div>
+                  <div class="content">
+                    <span class="value value--small value--tnums">{{ electricity | size }}</span>
+                    <span class="label">Hours Ahead</span>
+                  </div>
+                </div>
+                <div class="item col--span-1">
+                  <div class="meta"></div>
+                  <div class="content">
+                    <span class="value value--xsmall value--tnums">
+                      <div class="w--14 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
+                      Today
+                    </span>
+                    <span class="label">Electricity</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="border--h-5 w--full"></div>
+
+          <!-- More metrics -->
+          <div class="grid">
+            <div class="row">
+              <div class="grid">
+                <div class="item col--span-2">
+                  <div class="meta"></div>
+                  <div class="content">
+                    <span class="value value--tnums">€{{ gas | map: 'total_price' | sum | round: 2 }}</span>
+                    <span class="label">Total Gas (24h)</span>
+                  </div>
+                </div>
+                <div class="item col--span-1">
+                  <div class="meta"></div>
+                  <div class="content">
+                    <span class="value value--small value--tnums">{{ gas | size }}</span>
+                    <span class="label">Hours Ahead</span>
+                  </div>
+                </div>
+                <div class="item col--span-1">
+                  <div class="meta"></div>
+                  <div class="content">
+                    <span class="value value--xsmall value--tnums">
+                      <div class="w--14 h--1.5 mb--2 bg--gray-5"></div>
+                      Today
+                    </span>
+                    <span class="label">Gas</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart container -->
+          <div id="energy-chart" class="w--full"></div>
+
+          <script type="text/javascript">
+            // Build dynamic data from Liquid variables
             {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
-            {% for item in electricity %}
-              {% if item.from >= now %}
-                <tr>
-                  <td>
-                    <span class="label label--small">{{ item.till | date: "%H:%M" }}</span>
-                  </td>
-                  <td>
-                    <span class="label">{{ item.total_price | round: 2 }}</span>
-                  </td>
-                  <td>
-                    <span class="label">{{ gas[forloop.index0].total_price | round: 2 }}</span>
-                  </td>
-                </tr>
-              {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>
+            var electricityData = [
+              {% for item in electricity %}
+                {% if item.from >= now %}
+                  ["{{ item.till | date: "%Y-%m-%dT%H:00:00.000Z" }}", {{ item.total_price | round: 2 }}]{% unless forloop.last %},{% endunless %}
+                {% endif %}
+              {% endfor %}
+            ];
+            var gasData = [
+              {% for item in gas %}
+                {% if item.from >= now %}
+                  ["{{ item.till | date: "%Y-%m-%dT%H:00:00.000Z" }}", {{ item.total_price | round: 2 }}]{% unless forloop.last %},{% endunless %}
+                {% endif %}
+              {% endfor %}
+            ];
+
+            var formattedData = [
+              { name: "Electricity", data: electricityData },
+              { name: "Gas", data: gasData }
+            ];
+
+            // Initialize chart (adapted from example)
+            Highcharts.chart("energy-chart", {
+              chart: {
+                type: "spline",
+                height: 203,
+                width: null,
+                animation: false,
+                spacing: [10, 10, 5, 10]
+              },
+              title: { text: null },
+              plotOptions: {
+                series: {
+                  animation: false,
+                  enableMouseTracking: false,
+                  states: { hover: { enabled: false } },
+                  marker: { enabled: false }
+                }
+              },
+              series: [{
+                data: formattedData[0].data,
+                lineWidth: 4,
+                color: "#000000",
+                name: formattedData[0].name,
+                zIndex: 2
+              }, {
+                data: formattedData[1].data,
+                lineWidth: 5,
+                name: formattedData[1].name,
+                zIndex: 1,
+                color: {
+                  pattern: {
+                    image: "https://usetrmnl.com/images/grayscale/gray-5.png",
+                    width: 12,
+                    height: 12
+                  }
+                }
+              }],
+              tooltip: { enabled: false },
+              legend: { enabled: false },
+              yAxis: {
+                labels: { style: { fontSize: "16px", color: "#000000" } },
+                gridLineDashStyle: "shortdot",
+                gridLineWidth: 1,
+                gridLineColor: "#000000",
+                tickAmount: 5,
+                title: { text: null }
+              },
+              xAxis: {
+                type: "datetime",
+                labels: { style: { fontSize: "16px", color: "#000000" }, padding: 5, y: 25 },
+                lineWidth: 0,
+                gridLineDashStyle: "dot",
+                tickWidth: 1,
+                tickLength: 0,
+                gridLineWidth: 1,
+                gridLineColor: "#000000",
+                tickPixelInterval: 120,
+                title: { text: null }
+              },
+              credits: { enabled: false }
+            });
+          </script>
+        </div>
+
+        <div class="title_bar">
+          <img class="image" src="https://usetrmnl.com/images/plugins/weather/wi-lightning.svg" />
+          <span class="title">Frank Energie</span>
+          <span class="instance">Energy Prices Chart</span>
+        </div>
       </div>
-    </div>
-    <div class="title_bar">
-      <img class="image" src="https://usetrmnl.com/images/plugins/weather/wi-lightning.svg" />
-      <span class="title">Frank Energie</span>
-      <span class="instance">Dashboard Hourly</span>
     </div>
   </body>
 </html>

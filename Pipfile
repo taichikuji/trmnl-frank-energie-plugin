@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 flask = "*"
 requests = "*"
+gunicorn = "*"
 trmnlp = {git = "https://github.com/usetrmnl/trmnlp.git"}
 
 [dev-packages]

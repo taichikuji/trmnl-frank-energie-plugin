@@ -2,6 +2,8 @@ import requests
 import json
 from datetime import datetime
 from flask import Flask, jsonify
+import subprocess
+import sys
 
 app = Flask(__name__)
 
@@ -36,7 +38,7 @@ def fetch_prices():
     """
 
     # API endpoint
-    url = "https://graphql.frankenergie.nl/"
+    url = "https://frank-graphql-prod.graphcdn.app/"
 
     # Make the POST request
     response = requests.post(url, json={"query": query})
@@ -103,4 +105,7 @@ def get_prices():
     return jsonify(fetch_prices())
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    try:
+        subprocess.run([sys.executable, '-m', 'gunicorn', '--bind', '0.0.0.0:3000', 'main:app'], check=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        app.run(host='0.0.0.0', port=3000, debug=True)

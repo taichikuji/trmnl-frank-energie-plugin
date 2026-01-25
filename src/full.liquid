@@ -19,15 +19,19 @@
                 <div class="item col--span-2">
                   <div class="meta"></div>
                   <div class="content">
-                    <span class="value value--large value--tnums">€{{ electricity | map: 'total_price' | sum | round: 2 }}</span>
-                    <span class="label">Total Electricity (24h)</span>
+                    <span class="value value--large value--tnums">€{% if electricity.size > 0 %}
+                        {{ electricity[0].total_price | round: 2 }}{% else %}N/A{% endif %}
+                    </span>
+                    <span class="label">Price electricity now</span>
                   </div>
                 </div>
                 <div class="item col--span-1">
                   <div class="meta"></div>
                   <div class="content">
-                    <span class="value value--small value--tnums">{{ electricity | size }}</span>
-                    <span class="label">Hours Ahead</span>
+                    <span class="value value--small value--tnums">€{% if electricity.size > 0 %}
+                        {{ electricity | map: 'total_price' | sum | divided_by: electricity.size | round: 2 }}{% else %}N/A{% endif %}
+                    </span>
+                    <span class="label">Average electricity price</span>
                   </div>
                 </div>
                 <div class="item col--span-1">
@@ -35,7 +39,6 @@
                   <div class="content">
                     <span class="value value--xsmall value--tnums">
                       <div class="w--14 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
-                      Today
                     </span>
                     <span class="label">Electricity</span>
                   </div>
@@ -53,15 +56,19 @@
                 <div class="item col--span-2">
                   <div class="meta"></div>
                   <div class="content">
-                    <span class="value value--tnums">€{{ gas | map: 'total_price' | sum | round: 2 }}</span>
-                    <span class="label">Total Gas (24h)</span>
+                    <span class="value value--tnums">€{% if gas.size > 0 %}
+                        {{ gas[0].total_price | round: 2 }}{% else %}N/A{% endif %}
+                    </span>
+                    <span class="label">Price gas now</span>
                   </div>
                 </div>
                 <div class="item col--span-1">
                   <div class="meta"></div>
                   <div class="content">
-                    <span class="value value--small value--tnums">{{ gas | size }}</span>
-                    <span class="label">Hours Ahead</span>
+                    <span class="value value--small value--tnums">€{% if gas.size > 0 %}
+                        {{ gas | map: 'total_price' | sum | divided_by: gas.size | round: 2 }}{% else %}N/A{% endif %}
+                    </span>
+                    <span class="label">Average gas price</span>
                   </div>
                 </div>
                 <div class="item col--span-1">
@@ -69,7 +76,6 @@
                   <div class="content">
                     <span class="value value--xsmall value--tnums">
                       <div class="w--14 h--1.5 mb--2 bg--gray-5"></div>
-                      Today
                     </span>
                     <span class="label">Gas</span>
                   </div>
@@ -108,7 +114,7 @@
             Highcharts.chart("energy-chart", {
               chart: {
                 type: "spline",
-                height: 203,
+                height: 150,
                 width: null,
                 animation: false,
                 spacing: [10, 10, 5, 10]

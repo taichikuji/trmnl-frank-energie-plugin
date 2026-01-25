@@ -1,21 +1,39 @@
-<table class="table" data-table-limit="true">
-        <thead>
-          <tr>
-            <th><span class="title">Hour</span></th>
-            <th><span class="title">Electricity</span></th>
-            <th><span class="title">Gas</span></th>
-          </tr>
-        </thead>
-        <tbody>
-  {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
-  {% for item in electricity %}
-    {% if item.from >= now %}
-      <tr>
-        <td><span class="label label--small">{{ item.till | date: "%H:%M" }}</span></td>
-        <td><span class="label">{{ item.total_price | round: 2 }}</span></td>
-        <td><span class="label">{{ gas[forloop.index0].total_price | round: 2 }}</span></td>
-      </tr>
-    {% endif %}
-  {% endfor %}
-        </tbody>
-      </table>
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
+    <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
+  </head>
+  <body class="environment trmnl">
+    <div class="screen">
+      <div class="view view--full">
+        <table class="table" data-table-limit="true">
+          <thead>
+            <tr>
+              <th><span class="title">Hour</span></th>
+              <th><span class="title">Electricity</span></th>
+              <th><span class="title">Gas</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
+            {% for item in electricity %}
+              {% if item.from >= now %}
+                <tr>
+                  <td><span class="label label--small">{{ item.till | date: "%H:%M" }}</span></td>
+                  <td><span class="label">{{ item.total_price | round: 2 }}</span></td>
+                  <td><span class="label">{{ gas[forloop.index0].total_price | round: 2 }}</span></td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="title_bar">
+      <img class="image" src="https://usetrmnl.com/images/plugins/weather/wi-lightning.svg" />
+      <span class="title">Frank Energie</span>
+      <span class="instance">Dashboard Hourly</span>
+    </div>
+  </body>
+</html>

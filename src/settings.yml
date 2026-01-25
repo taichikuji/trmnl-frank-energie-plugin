@@ -11,5 +11,5 @@ static_data: ''
 polling_verb: get
 polling_url: ''
 polling_headers: ''
-name: My Plugin
+name: Frank Energie Plugin
 refresh_interval: 1440

@@ -34,6 +34,7 @@ TRMNL uses a "flavor" of Liquid optimized for e-ink (800x480 resolution).
 - Framework: https://usetrmnl.com/framework
 - Responsive Design (Important for TRMNL X): https://usetrmnl.com/framework/responsive
   - Reason: TRMNL X is bigger,  as well as other devices that use TRMNL Firmware; ensure responsiveness for better design policy.
+- Charts: https://usetrmnl.com/framework/docs/chart
 
 ## Design Thought Process
 

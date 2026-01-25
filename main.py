@@ -7,6 +7,27 @@ import sys
 
 app = Flask(__name__)
 
+def process_prices(price_list):
+    output = []
+    for item in price_list:
+        total_price = (
+            item["marketPrice"] +
+            item["marketPriceTax"] +
+            item["sourcingMarkupPrice"] +
+            item["energyTaxPrice"]
+        )
+        output.append({
+            "from": item["from"],
+            "till": item["till"],
+            "marketPrice": item["marketPrice"],
+            "marketPriceTax": item["marketPriceTax"],
+            "sourcingMarkupPrice": item["sourcingMarkupPrice"],
+            "energyTaxPrice": item["energyTaxPrice"],
+            "total_price": total_price,
+            "perUnit": item["perUnit"]
+        })
+    return output
+
 def fetch_prices():
     # Get today's date in YYYY-MM-DD format
     today = datetime.now().strftime("%Y-%m-%d")
@@ -54,45 +75,9 @@ def fetch_prices():
     electricity_prices = market_prices.get("electricityPrices", [])
     gas_prices = market_prices.get("gasPrices", [])
 
-    # Process electricity prices
-    electricity_output = []
-    for item in electricity_prices:
-        total_price = (
-            item["marketPrice"] +
-            item["marketPriceTax"] +
-            item["sourcingMarkupPrice"] +
-            item["energyTaxPrice"]
-        )
-        electricity_output.append({
-            "from": item["from"],
-            "till": item["till"],
-            "marketPrice": item["marketPrice"],
-            "marketPriceTax": item["marketPriceTax"],
-            "sourcingMarkupPrice": item["sourcingMarkupPrice"],
-            "energyTaxPrice": item["energyTaxPrice"],
-            "total_price": total_price,
-            "perUnit": item["perUnit"]
-        })
-
-    # Process gas prices
-    gas_output = []
-    for item in gas_prices:
-        total_price = (
-            item["marketPrice"] +
-            item["marketPriceTax"] +
-            item["sourcingMarkupPrice"] +
-            item["energyTaxPrice"]
-        )
-        gas_output.append({
-            "from": item["from"],
-            "till": item["till"],
-            "marketPrice": item["marketPrice"],
-            "marketPriceTax": item["marketPriceTax"],
-            "sourcingMarkupPrice": item["sourcingMarkupPrice"],
-            "energyTaxPrice": item["energyTaxPrice"],
-            "total_price": total_price,
-            "perUnit": item["perUnit"]
-        })
+    # Build API output with process_prices()
+    electricity_output = process_prices(electricity_prices)
+    gas_output = process_prices(gas_prices)
 
     # Output dict
     return {

@@ -106,6 +106,6 @@ def get_prices():
 
 if __name__ == "__main__":
     try:
-        subprocess.run([sys.executable, '-m', 'gunicorn', '--bind', '0.0.0.0:3000', 'main:app'], check=True)
-    except (subprocess.CalledProcessError, FileNotFoundError):
+        subprocess.run([sys.executable, '-m', 'gunicorn', '--bind', '0.0.0.0:3000', '--access-logfile', '-', '--log-level', 'info', 'main:app'])
+    except FileNotFoundError:
         app.run(host='0.0.0.0', port=3000, debug=True)

@@ -11,7 +11,7 @@
   <body class="environment trmnl">
     <div class="screen">
       <div class="view view--full">
-        <div class="layout layout--col" style="height: calc(100vh - 50px); display: flex; flex-direction: column;">
+        <div class="layout layout--col h--full pb--10">
           <!-- Metrics section: Adapt to show energy stats -->
           <div class="grid">
             <div class="row">
@@ -85,10 +85,7 @@
           </div>
 
           <!-- Chart container -->
-          <div
-            id="energy-chart"
-            class="w--full"
-            style="flex-grow: 1; min-height: 0;"></div>
+          <div id="energy-chart" class="w--full flex--grow"></div>
 
           <script type="text/javascript">
             // Build dynamic data from Liquid variables

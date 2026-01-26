@@ -4,8 +4,19 @@ from datetime import datetime
 from flask import Flask, jsonify
 import subprocess
 import sys
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_caching import Cache
 
 app = Flask(__name__)
+
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 def process_prices(price_list):
     output = []
@@ -28,6 +39,7 @@ def process_prices(price_list):
         })
     return output
 
+@cache.cached(timeout=300)
 def fetch_prices():
     # Get today's date in YYYY-MM-DD format
     today = datetime.now().strftime("%Y-%m-%d")
@@ -86,6 +98,7 @@ def fetch_prices():
     }
 
 @app.route('/api', methods=['GET'])
+@limiter.limit("10 per minute")
 def get_prices():
     return jsonify(fetch_prices())
 

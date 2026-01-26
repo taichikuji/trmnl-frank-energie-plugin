@@ -1,6 +1,7 @@
 # trmnl-frank-energie-plugin
 A TRMNL Frank Energie plugin to display electricity and gas prices
 
+![TRMNL plugin preview](media/preview.webp)
 ## References
 
 - Marktprijzen API: https://reversed.notion.site/Marktprijzen-API-89ce600a88ac4abe8c2ad89d3167a83e

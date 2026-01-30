@@ -1,1 +1,92 @@
+{% comment %}
+  =============================================================================
+  COMPONENT: Head Assets
+  usage: {% render 'head_assets' %}
+  =============================================================================
+{% endcomment %}
 
+{% template head_assets %}
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
+  <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
+  <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+  <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
+  <script src="https://usetrmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+{% endtemplate %}
+
+{% comment %}
+  =============================================================================
+  COMPONENT: Price Card
+  Displays the current price, average price, and a label bar.
+
+  Params:
+  - data: The data array (e.g., electricity)
+  - label_now: Label for current price (e.g., "Price electricity now")
+  - label_avg: Label for average price
+  - resource_name: Name of the resource (e.g., "Electricity")
+  - bar_color: Tailwind-style class for the bar (e.g., "bg--black", "bg--gray-5")
+  =============================================================================
+{% endcomment %}
+
+{% template price_card %}
+  {% assign current_val = "N/A" %}
+  {% assign avg_val = "N/A" %}
+
+  {% if data.size > 0 %}
+    {% assign current_val = data[0].total_price | round: 2 %}
+    {% assign avg_val = data | map: 'total_price' | sum | divided_by: data.size | round: 2 %}
+  {% endif %}
+
+  <div class="grid">
+    <!-- Current Price -->
+    <div class="item col--span-2">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value value--large value--tnums">€{{ current_val }}</span>
+        <span class="label">{{ label_now }}</span>
+      </div>
+    </div>
+
+    <!-- Average Price -->
+    <div class="item col--span-1">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value value--small value--tnums">€{{ avg_val }}</span>
+        <span class="label">{{ label_avg }}</span>
+      </div>
+    </div>
+
+    <!-- Resource Indicator Bar -->
+    <div class="item col--span-1">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="value value--xsmall value--tnums">
+          <div class="w--14 h--1.5 mb--2 {{ bar_color }}" style="border-radius: 20px;"></div>
+        </span>
+        <span class="label">{{ resource_name }}</span>
+      </div>
+    </div>
+  </div>
+{% endtemplate %}
+
+{% comment %}
+  =============================================================================
+  COMPONENT: JS Time Series
+  Generates a JS array [timestamp, value] for the chart.
+
+  Params:
+  - data: The data array
+  - start_time: The ISO timestamp to filter from (optional)
+  =============================================================================
+{% endcomment %}
+
+{% template js_time_series %}
+  [
+  {% for item in data %}
+    {% if start_time == nil or item.from >= start_time %}
+      ["{{ item.till | date: "%Y-%m-%dT%H:00:00.000Z" }}", {{ item.total_price | round: 2 }}]
+      {% unless forloop.last %},{% endunless %}
+    {% endif %}
+  {% endfor %}
+  ]
+{% endtemplate %}

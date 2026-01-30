@@ -1,123 +1,64 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
-    <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
-    <!-- Add Highcharts scripts for charting -->
-    <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
-    <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
-    <script src="https://usetrmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+    {% render 'head_assets' %}
   </head>
   <body class="environment trmnl">
     <div class="screen">
       <div class="view view--full">
         <div class="layout layout--col h--full pb--10">
-          <!-- Metrics section: Adapt to show energy stats -->
+
+          <!-- Electricity Section -->
           <div class="grid">
             <div class="row">
-              <div class="grid">
-                <div class="item col--span-2">
-                  <div class="meta"></div>
-                  <div class="content">
-                    <span class="value value--large value--tnums">€{% if electricity.size > 0 %}
-                        {{ electricity[0].total_price | round: 2 }}{% else %}N/A{% endif %}
-                    </span>
-                    <span class="label">Price electricity now</span>
-                  </div>
-                </div>
-                <div class="item col--span-1">
-                  <div class="meta"></div>
-                  <div class="content">
-                    <span class="value value--small value--tnums">€{% if electricity.size > 0 %}
-                        {{ electricity | map: 'total_price' | sum | divided_by: electricity.size | round: 2 }}{% else %}N/A{% endif %}
-                    </span>
-                    <span class="label">Average electricity price</span>
-                  </div>
-                </div>
-                <div class="item col--span-1">
-                  <div class="meta"></div>
-                  <div class="content">
-                    <span class="value value--xsmall value--tnums">
-                      <div class="w--14 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
-                    </span>
-                    <span class="label">Electricity</span>
-                  </div>
-                </div>
-              </div>
+              {% render 'price_card'
+                , data: electricity
+                , label_now: "Price electricity now"
+                , label_avg: "Avg electricity price"
+                , resource_name: "Electricity"
+                , bar_color: "bg--black"
+              %}
             </div>
           </div>
 
           <div class="border--h-5 w--full"></div>
 
-          <!-- More metrics -->
+          <!-- Gas Section -->
           <div class="grid">
             <div class="row">
-              <div class="grid">
-                <div class="item col--span-2">
-                  <div class="meta"></div>
-                  <div class="content">
-                    <span class="value value--tnums">€{% if gas.size > 0 %}
-                        {{ gas[0].total_price | round: 2 }}{% else %}N/A{% endif %}
-                    </span>
-                    <span class="label">Price gas now</span>
-                  </div>
-                </div>
-                <div class="item col--span-1">
-                  <div class="meta"></div>
-                  <div class="content">
-                    <span class="value value--small value--tnums">€{% if gas.size > 0 %}
-                        {{ gas | map: 'total_price' | sum | divided_by: gas.size | round: 2 }}{% else %}N/A{% endif %}
-                    </span>
-                    <span class="label">Average gas price</span>
-                  </div>
-                </div>
-                <div class="item col--span-1">
-                  <div class="meta"></div>
-                  <div class="content">
-                    <span class="value value--xsmall value--tnums">
-                      <div class="w--14 h--1.5 mb--2 bg--gray-5"></div>
-                    </span>
-                    <span class="label">Gas</span>
-                  </div>
-                </div>
-              </div>
+              {% render 'price_card'
+                , data: gas
+                , label_now: "Price gas now"
+                , label_avg: "Avg gas price"
+                , resource_name: "Gas"
+                , bar_color: "bg--gray-5"
+              %}
             </div>
           </div>
 
-          <!-- Chart container -->
+          <!-- Chart Container -->
           <div id="energy-chart" class="w--full flex--grow"></div>
 
           <script type="text/javascript">
-            // Build dynamic data from Liquid variables
             {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
-            var electricityData = [
-              {% for item in electricity %}
-                {% if item.from >= now %}
-                  ["{{ item.till | date: "%Y-%m-%dT%H:00:00.000Z" }}", {{ item.total_price | round: 2 }}]{% unless forloop.last %},{% endunless %}
-                {% endif %}
-              {% endfor %}
-            ];
-            var gasData = [
-              {% for item in gas %}
-                {% if item.from >= now %}
-                  ["{{ item.till | date: "%Y-%m-%dT%H:00:00.000Z" }}", {{ item.total_price | round: 2 }}]{% unless forloop.last %},{% endunless %}
-                {% endif %}
-              {% endfor %}
-            ];
+
+            // Use the shared component to generate data arrays
+            var electricityData = {% render 'js_time_series', data: electricity, start_time: now %};
+            var gasData = {% render 'js_time_series', data: gas, start_time: now %};
 
             var formattedData = [
               { name: "Electricity", data: electricityData },
               { name: "Gas", data: gasData }
             ];
 
-            // Initialize chart (adapted from example)
             Highcharts.chart("energy-chart", {
               chart: {
                 type: "spline",
                 height: null,
                 width: null,
                 animation: false,
-                spacing: [10, 10, 5, 10]
+                spacing: [10, 10, 5, 10],
+                backgroundColor: 'transparent'
               },
               title: { text: null },
               plotOptions: {
@@ -175,6 +116,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Title Bar -->
     <div class="title_bar">
       <img class="image" src="https://usetrmnl.com/images/plugins/weather/wi-lightning.svg">
       <span class="title">Frank Energie</span>

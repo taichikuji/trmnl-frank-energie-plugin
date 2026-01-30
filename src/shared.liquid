@@ -17,7 +17,7 @@
 {% comment %}
   =============================================================================
   COMPONENT: Price Card
-  Displays the current price, average price, and a label bar.
+  Displays the current price, average price, and optionally a label bar.
 
   Params:
   - data: The data array (e.g., electricity)
@@ -25,6 +25,8 @@
   - label_avg: Label for average price
   - resource_name: Name of the resource (e.g., "Electricity")
   - bar_color: Tailwind-style class for the bar (e.g., "bg--black", "bg--gray-5")
+  - show_indicator: Whether to show the resource indicator bar (default: true)
+  - current_size: Size class for current price ("large" or "small", default: "large")
   =============================================================================
 {% endcomment %}
 
@@ -42,7 +44,7 @@
     <div class="item col--span-2">
       <div class="meta"></div>
       <div class="content">
-        <span class="value value--large value--tnums">€{{ current_val }}</span>
+        <span class="value value--{{ current_size | default: "large" }} value--tnums">€{{ current_val }}</span>
         <span class="label">{{ label_now }}</span>
       </div>
     </div>
@@ -56,16 +58,18 @@
       </div>
     </div>
 
-    <!-- Resource Indicator Bar -->
-    <div class="item col--span-1">
-      <div class="meta"></div>
-      <div class="content">
-        <span class="value value--xsmall value--tnums">
-          <div class="w--14 h--1.5 mb--2 {{ bar_color }}" style="border-radius: 20px;"></div>
-        </span>
-        <span class="label">{{ resource_name }}</span>
+    {% if show_indicator | default: true %}
+      <!-- Resource Indicator Bar -->
+      <div class="item col--span-1">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="value value--xsmall value--tnums">
+            <div class="w--14 h--1.5 mb--2 {{ bar_color }}" style="border-radius: 20px;"></div>
+          </span>
+          <span class="label">{{ resource_name }}</span>
+        </div>
       </div>
-    </div>
+    {% endif %}
   </div>
 {% endtemplate %}
 

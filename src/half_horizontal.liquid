@@ -1,77 +1,117 @@
-<div class="layout layout--col gap--space-between">
-  <div class="grid h-full">
-    <div class="col--span-3 col gap--space-between">
-      <div class="grid grid--cols-2 gap--[9px]" data-adjust-grid-gaps="false">
-        <div class="item">
-          <div class="meta"></div>
-          <div class="content">
-            <span class="value value--tnums" data-value-type="number">$159,022</span>
-            <span class="label">Total Sales</span>
-          </div>
-        </div>
-        <div class="item">
-          <div class="meta"></div>
-          <div class="content">
-            <span class="value value--tnums" data-value-type="number">$156</span>
-            <span class="label">AOV</span>
-          </div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="grid grid--cols-2">
-        <div class="item">
-          <div class="meta"></div>
-          <div class="content">
-            <span class="value value--xsmall value--tnums" data-value-type="number">763</span>
-            <span class="label">Pending Orders</span>
-          </div>
-        </div>
-        <div class="item">
-          <div class="meta"></div>
-          <div class="content">
-            <span class="value value--xsmall value--tnums" data-value-type="number">254</span>
-            <span class="label">Fulfilled Orders</span>
-          </div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="grid grid grid--cols-2">
-        <div class="item">
-          <div class="meta"></div>
-          <div class="content">
-            <span class="value value--xxsmall value--tnums" data-value-type="date">
-              <div class="w--12 h--1.5 mb--2 bg--gray-5"></div>
-              Nov 01 - 
-                  Nov 30
-            </span>
-          </div>
-        </div>
-        <div class="item">
-          <div class="meta"></div>
-          <div class="content">
-            <span class="value value--xxsmall value--tnums" data-value-type="date">
-              <div class="w--12 h--1.5 mb--2 bg--black" style="border-radius: 20px;"></div>
-              Dec 01 - 
-                    Dec 31
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col--span-3 col gap--space-between">
-      <div id="chart-48a6eec5eebe" class="w--full"></div>
-      <script src="https://code.highcharts.com/12.3.0/highcharts.js"></script>
-      <script src="https://code.highcharts.com/12.3.0/highcharts-more.js"></script>
-      <script src="https://code.highcharts.com/12.3.0/modules/pattern-fill.js"></script>
-      <script type="text/javascript"></script>
+<div class="layout layout--col h--full pb--10">
+
+  <!-- Electricity Section -->
+  <div class="grid">
+    <div class="row">
+      {% render 'price_card'
+        , data: electricity
+        , label_now: "Price electricity now"
+        , label_avg: "Avg electricity price"
+        , resource_name: "Electricity"
+        , bar_color: "bg--black"
+        , show_indicator: false
+        , current_size: "small"
+      %}
     </div>
   </div>
+
+  <div class="border--h-5 w--full"></div>
+
+  <!-- Gas Section -->
+  <div class="grid">
+    <div class="row">
+      {% render 'price_card'
+        , data: gas
+        , label_now: "Price gas now"
+        , label_avg: "Avg gas price"
+        , resource_name: "Gas"
+        , bar_color: "bg--gray-5"
+        , show_indicator: false
+        , current_size: "small"
+      %}
+    </div>
+  </div>
+
+  <!-- Chart Container -->
+  <div id="energy-chart" class="w--full flex--grow"></div>
+
+  <script type="text/javascript">
+            {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
+
+            // Use the shared component to generate data arrays
+            var electricityData = {% render 'js_time_series', data: electricity, start_time: now %};
+            var gasData = {% render 'js_time_series', data: gas, start_time: now %};
+
+            var formattedData = [
+              { name: "Electricity", data: electricityData },
+              { name: "Gas", data: gasData }
+            ];
+
+            Highcharts.chart("energy-chart", {
+              chart: {
+                type: "spline",
+                height: null,
+                width: null,
+                animation: false,
+                spacing: [10, 10, 5, 10],
+                backgroundColor: 'transparent'
+              },
+              title: { text: null },
+              plotOptions: {
+                series: {
+                  animation: false,
+                  enableMouseTracking: false,
+                  states: { hover: { enabled: false } },
+                  marker: { enabled: false }
+                }
+              },
+              series: [{
+                data: formattedData[0].data,
+                lineWidth: 4,
+                color: "#000000",
+                name: formattedData[0].name,
+                zIndex: 2
+              }, {
+                data: formattedData[1].data,
+                lineWidth: 5,
+                name: formattedData[1].name,
+                zIndex: 1,
+                color: {
+                  pattern: {
+                    image: "https://usetrmnl.com/images/grayscale/gray-5.png",
+                    width: 12,
+                    height: 12
+                  }
+                }
+              }],
+              tooltip: { enabled: false },
+              legend: { enabled: false },
+              yAxis: {
+                labels: { style: { fontSize: "16px", color: "#000000" } },
+                gridLineDashStyle: "shortdot",
+                gridLineWidth: 1,
+                gridLineColor: "#000000",
+                tickAmount: 5,
+                title: { text: null }
+              },
+              xAxis: {
+                type: "datetime",
+                labels: { style: { fontSize: "16px", color: "#000000" }, padding: 5, y: 25 },
+                lineWidth: 0,
+                gridLineDashStyle: "dot",
+                tickWidth: 1,
+                tickLength: 0,
+                gridLineWidth: 1,
+                gridLineColor: "#000000",
+                tickPixelInterval: 120,
+                title: { text: null }
+              },
+              credits: { enabled: false }
+            });
+  </script>
 </div>
 <div class="title_bar">
-  <img
-    alt="Shopify Plugin Icon"
-    class="image"
-    src="https://trmnl.com/images/plugins/shopify--render.svg">
-  <span class="title">Shopify</span>
-  <span class="instance">trmnl.com</span>
+  <img class="image" src="https://usetrmnl.com/images/plugins/weather/wi-lightning.svg">
+  <span class="title">Frank Energie</span>
+  <span class="instance">Energy Prices Chart</span>
 </div>

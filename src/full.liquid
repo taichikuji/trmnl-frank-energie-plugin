@@ -37,82 +37,14 @@
           </div>
 
           <!-- Chart Container -->
-          <div id="energy-chart" class="w--full flex--grow"></div>
+          {% render 'energy_chart'
+            , id: "energy-chart"
+            , electricity: electricity
+            , gas: gas
+            , variant: "full"
+            , chart_height: "null" 
+          %}
 
-          <script type="text/javascript">
-            {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
-
-            // Use the shared component to generate data arrays
-            var electricityData = {% render 'js_time_series', data: electricity, start_time: now %};
-            var gasData = {% render 'js_time_series', data: gas, start_time: now %};
-
-            var formattedData = [
-              { name: "Electricity", data: electricityData },
-              { name: "Gas", data: gasData }
-            ];
-
-            Highcharts.chart("energy-chart", {
-              chart: {
-                type: "spline",
-                height: null,
-                width: null,
-                animation: false,
-                spacing: [10, 10, 5, 10],
-                backgroundColor: 'transparent'
-              },
-              title: { text: null },
-              plotOptions: {
-                series: {
-                  animation: false,
-                  enableMouseTracking: false,
-                  states: { hover: { enabled: false } },
-                  marker: { enabled: false }
-                }
-              },
-              series: [{
-                data: formattedData[0].data,
-                lineWidth: 4,
-                color: "#000000",
-                name: formattedData[0].name,
-                zIndex: 2
-              }, {
-                data: formattedData[1].data,
-                lineWidth: 5,
-                name: formattedData[1].name,
-                zIndex: 1,
-                color: {
-                  pattern: {
-                    image: "https://usetrmnl.com/images/grayscale/gray-5.png",
-                    width: 12,
-                    height: 12
-                  }
-                }
-              }],
-              tooltip: { enabled: false },
-              legend: { enabled: false },
-              yAxis: {
-                labels: { style: { fontSize: "16px", color: "#000000" } },
-                gridLineDashStyle: "shortdot",
-                gridLineWidth: 1,
-                gridLineColor: "#000000",
-                tickAmount: 5,
-                title: { text: null }
-              },
-              xAxis: {
-                type: "datetime",
-                labels: { style: { fontSize: "16px", color: "#000000" }, padding: 5, y: 25 },
-                lineWidth: 0,
-                gridLineDashStyle: "dot",
-                tickWidth: 1,
-                tickLength: 0,
-                gridLineWidth: 1,
-                gridLineColor: "#000000",
-                tickPixelInterval: 120,
-                title: { text: null }
-              },
-              credits: { enabled: false }
-            });
-          </script>
         </div>
       </div>
     </div>

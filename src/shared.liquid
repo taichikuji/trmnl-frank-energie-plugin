@@ -1,33 +1,34 @@
 {% comment %}
-  =============================================================================
-  COMPONENT: Head Assets
-  usage: {% render 'head_assets' %}
-  =============================================================================
+ =============================================================================
+ COMPONENT: Chart Assets
+ usage: {% render 'chart_assets' %}
+ =============================================================================
 {% endcomment %}
 
-{% template head_assets %}
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
-  <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
+{% template chart_assets %}
   <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script src="https://usetrmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
   <script src="https://usetrmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
 {% endtemplate %}
 
 {% comment %}
-  =============================================================================
-  COMPONENT: Price Card
-  Displays the current price, average price, and optionally a label bar.
+ =============================================================================
+ COMPONENT: Head Assets
+ usage: {% render 'head_assets' %}
+ =============================================================================
+{% endcomment %}
 
-  Params:
-  - data: The data array (e.g., electricity)
-  - label_now: Label for current price (e.g., "Price electricity now")
-  - label_avg: Label for average price
-  - resource_name: Name of the resource (e.g., "Electricity")
-  - bar_color: Tailwind-style class for the bar (e.g., "bg--black", "bg--gray-5")
-  - show_indicator: Whether to show the resource indicator bar (default: true)
-  - current_size: Size class for current price ("large" or "small", default: "large")
-  =============================================================================
+{% template head_assets %}
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
+  <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
+  {% render 'chart_assets' %}
+{% endtemplate %}
+
+{% comment %}
+ =============================================================================
+ COMPONENT: Price Card (Full View)
+ =============================================================================
 {% endcomment %}
 
 {% template price_card %}
@@ -40,7 +41,6 @@
   {% endif %}
 
   <div class="grid">
-    <!-- Current Price -->
     <div class="item col--span-2">
       <div class="meta"></div>
       <div class="content">
@@ -48,8 +48,6 @@
         <span class="label">{{ label_now }}</span>
       </div>
     </div>
-
-    <!-- Average Price -->
     <div class="item col--span-1">
       <div class="meta"></div>
       <div class="content">
@@ -57,9 +55,7 @@
         <span class="label">{{ label_avg }}</span>
       </div>
     </div>
-
     {% if show_indicator | default: true %}
-      <!-- Resource Indicator Bar -->
       <div class="item col--span-1">
         <div class="meta"></div>
         <div class="content">
@@ -74,23 +70,153 @@
 {% endtemplate %}
 
 {% comment %}
-  =============================================================================
-  COMPONENT: JS Time Series
-  Generates a JS array [timestamp, value] for the chart.
+ =============================================================================
+ COMPONENT: Mini Stat (Quadrant View)
+Params: data, label, type, size (optional class modifier like 'xsmall')
+ =============================================================================
+{% endcomment %}
 
-  Params:
-  - data: The data array
-  - start_time: The ISO timestamp to filter from (optional)
-  =============================================================================
+{% template mini_stat %}
+  {% assign val = "N/A" %}
+  {% if data.size > 0 %}
+    {% if type == 'avg' %}
+      {% assign val = data | map: 'total_price' | sum | divided_by: data.size | round: 2 %}
+    {% else %}
+      {% assign val = data[0].total_price | round: 2 %}
+    {% endif %}
+  {% endif %}
+
+  <div class="item">
+    <div class="meta"></div>
+    <div class="content">
+      <span class="value {% if size %}value--{{ size }}{% endif %} value--tnums">€{{ val }}</span>
+      <span class="label">{{ label }}</span>
+    </div>
+  </div>
+{% endtemplate %}
+
+{% comment %}
+ =============================================================================
+ COMPONENT: Legend Item (Quadrant View)
+ =============================================================================
+{% endcomment %}
+
+{% template legend_item %}
+  <div class="item">
+    <div class="meta"></div>
+    <div class="content">
+      <span class="value value--xxsmall value--tnums">
+        <div class="w--12 h--1.5 mb--2 {{ color }}" style="border-radius: 20px;"></div>
+        {{ label }}
+      </span>
+    </div>
+  </div>
+{% endtemplate %}
+
+{% comment %}
+ =============================================================================
+ COMPONENT: JS Time Series
+ =============================================================================
 {% endcomment %}
 
 {% template js_time_series %}
-  [
+[
   {% for item in data %}
     {% if start_time == nil or item.from >= start_time %}
       ["{{ item.till | date: "%Y-%m-%dT%H:00:00.000Z" }}", {{ item.total_price | round: 2 }}]
       {% unless forloop.last %},{% endunless %}
     {% endif %}
   {% endfor %}
-  ]
+]
+{% endtemplate %}
+
+{% comment %}
+ =============================================================================
+ COMPONENT: Energy Chart
+ =============================================================================
+{% endcomment %}
+
+{% template energy_chart %}
+  <div id="{{ id }}" class="w--full {% if variant == 'full' %}flex--grow{% else %}h--full{% endif %}"></div>
+
+  <script type="text/javascript">
+    {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
+    var electricityData = {% render 'js_time_series', data: electricity, start_time: now %};
+    var gasData = {% render 'js_time_series', data: gas, start_time: now %};
+
+    Highcharts.chart("{{ id }}", {
+      chart: {
+        type: "spline",
+        height: null,
+        width: null,
+        animation: false,
+        backgroundColor: 'transparent',
+        {% if variant == 'sparkline' %}
+          margin: [0, 0, 0, 0],
+          spacing: [0, 0, 0, 0],
+        {% else %}
+          spacing: [10, 10, 5, 10],
+        {% endif %}
+      },
+      title: { text: null },
+      plotOptions: {
+        series: {
+          animation: false,
+          enableMouseTracking: false,
+          states: { hover: { enabled: false } },
+          marker: { enabled: false }
+        }
+      },
+      series: [{
+        data: electricityData,
+        lineWidth: 4,
+        color: "#000000",
+        name: "Electricity",
+        zIndex: 2
+      }, {
+        data: gasData,
+        lineWidth: 5,
+        name: "Gas",
+        zIndex: 1,
+        color: {
+          pattern: {
+            image: "https://usetrmnl.com/images/grayscale/gray-5.png",
+            width: 12,
+            height: 12
+          }
+        }
+      }],
+      tooltip: { enabled: false },
+      legend: { enabled: false },
+      yAxis: {
+        {% if variant == 'sparkline' %}
+          visible: false,
+        {% else %}
+          labels: { style: { fontSize: "16px", color: "#000000" } },
+          gridLineDashStyle: "shortdot",
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          tickAmount: 5,
+          title: { text: null }
+        {% endif %}
+      },
+      xAxis: {
+        {% if variant == 'sparkline' %}
+          visible: false,
+        {% else %}
+          type: "datetime",
+          labels: { style: { fontSize: "16px", color: "#000000" }, padding: 5, y: 25 },
+          lineWidth: 0,
+          gridLineDashStyle: "dot",
+          tickWidth: 1,
+          tickLength: 0,
+          gridLineWidth: 1,
+          gridLineColor: "#000000",
+          tickPixelInterval: 120,
+          title: { text: null }
+        {% endif %}
+      },
+      credits: { enabled: false }
+    });
+  </script>
 {% endtemplate %}

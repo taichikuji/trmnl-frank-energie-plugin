@@ -144,79 +144,100 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
     var electricityData = {% render 'js_time_series', data: electricity, start_time: now %};
     var gasData = {% render 'js_time_series', data: gas, start_time: now %};
 
-    Highcharts.chart("{{ id }}", {
-      chart: {
-        type: "spline",
-        height: null,
-        width: null,
-        animation: false,
-        backgroundColor: 'transparent',
-        {% if variant == 'sparkline' %}
-          margin: [0, 0, 0, 0],
-          spacing: [0, 0, 0, 0],
-        {% else %}
-          spacing: [10, 10, 5, 10],
-        {% endif %}
-      },
-      title: { text: null },
-      plotOptions: {
-        series: {
+    (function() {
+      var chartConfig = {
+        chart: {
+          type: "spline",
+          height: null,
+          width: null,
           animation: false,
-          enableMouseTracking: false,
-          states: { hover: { enabled: false } },
-          marker: { enabled: false }
-        }
-      },
-      series: [{
-        data: electricityData,
-        lineWidth: 4,
-        color: "#000000",
-        name: "Electricity",
-        zIndex: 2
-      }, {
-        data: gasData,
-        lineWidth: 5,
-        name: "Gas",
-        zIndex: 1,
-        color: {
-          pattern: {
-            image: "https://usetrmnl.com/images/grayscale/gray-5.png",
-            width: 12,
-            height: 12
+          backgroundColor: 'transparent',
+          {% if variant == 'sparkline' %}
+            margin: [0, 0, 0, 0],
+            spacing: [0, 0, 0, 0],
+          {% else %}
+            spacing: [10, 10, 5, 10],
+          {% endif %}
+          events: {
+            load: function() {
+              // Force reflow after chart loads to ensure pattern fills render correctly
+              var chart = this;
+              setTimeout(function() {
+                chart.reflow();
+              }, 50);
+            }
           }
-        }
-      }],
-      tooltip: { enabled: false },
-      legend: { enabled: false },
-      yAxis: {
-        {% if variant == 'sparkline' %}
-          visible: false,
-        {% else %}
-          labels: { style: { fontSize: "16px", color: "#000000" } },
-          gridLineDashStyle: "shortdot",
-          gridLineWidth: 1,
-          gridLineColor: "#000000",
-          tickAmount: 5,
-          title: { text: null }
-        {% endif %}
-      },
-      xAxis: {
-        {% if variant == 'sparkline' %}
-          visible: false,
-        {% else %}
-          type: "datetime",
-          labels: { style: { fontSize: "16px", color: "#000000" }, padding: 5, y: 25 },
-          lineWidth: 0,
-          gridLineDashStyle: "dot",
-          tickWidth: 1,
-          tickLength: 0,
-          gridLineWidth: 1,
-          gridLineColor: "#000000",
-          tickPixelInterval: 120,
-          title: { text: null }
-        {% endif %}
-      },
-      credits: { enabled: false }
-    });
+        },
+        title: { text: null },
+        plotOptions: {
+          series: {
+            animation: false,
+            enableMouseTracking: false,
+            states: { hover: { enabled: false } },
+            marker: { enabled: false }
+          }
+        },
+        series: [{
+          data: electricityData,
+          lineWidth: 4,
+          color: "#000000",
+          name: "Electricity",
+          zIndex: 2
+        }, {
+          data: gasData,
+          lineWidth: 5,
+          name: "Gas",
+          zIndex: 1,
+          color: {
+            pattern: {
+              image: "https://usetrmnl.com/images/grayscale/gray-5.png",
+              width: 12,
+              height: 12,
+              aspectRatio: 1
+            }
+          }
+        }],
+        tooltip: { enabled: false },
+        legend: { enabled: false },
+        yAxis: {
+          {% if variant == 'sparkline' %}
+            visible: false,
+          {% else %}
+            labels: { style: { fontSize: "16px", color: "#000000" } },
+            gridLineDashStyle: "shortdot",
+            gridLineWidth: 1,
+            gridLineColor: "#000000",
+            tickAmount: 5,
+            title: { text: null }
+          {% endif %}
+        },
+        xAxis: {
+          {% if variant == 'sparkline' %}
+            visible: false,
+          {% else %}
+            type: "datetime",
+            labels: { style: { fontSize: "16px", color: "#000000" }, padding: 5, y: 25 },
+            lineWidth: 0,
+            gridLineDashStyle: "dot",
+            tickWidth: 1,
+            tickLength: 0,
+            gridLineWidth: 1,
+            gridLineColor: "#000000",
+            tickPixelInterval: 120,
+            title: { text: null }
+          {% endif %}
+        },
+        credits: { enabled: false }
+      };
+
+      // Wait for DOM to be ready before creating chart
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          Highcharts.chart("{{ id }}", chartConfig);
+        });
+      } else {
+        Highcharts.chart("{{ id }}", chartConfig);
+      }
+    })();
   </script>
 {% endtemplate %}

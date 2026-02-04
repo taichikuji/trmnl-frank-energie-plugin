@@ -1,52 +1,84 @@
 # trmnl-frank-energie-plugin
-A TRMNL Frank Energie plugin to display electricity and gas prices
 
-![TRMNL plugin preview](media/preview.webp)
-## References
+## What is this?
 
-- Marktprijzen API: https://reversed.notion.site/Marktprijzen-API-89ce600a88ac4abe8c2ad89d3167a83e
-- Home Assistant Frank Energie const.py: https://raw.githubusercontent.com/bajansen/home-assistant-frank_energie/412c1c61eebeaa89e2b067b0d93042e446b55a01/custom_components/frank_energie/const.py
-- Home Assistant Frank Energie repo: https://github.com/bajansen/home-assistant-frank_energie/
-- TRMNL repo: https://github.com/usetrmnl/trmnlp
-- TRMNL Private Plugins Templates: https://docs.usetrmnl.com/go/private-plugins/templates
+A TRMNL Frank Energie plugin to display electricity and gas prices.
 
-## TRMNL Information
+## Why?
 
-TRMNL uses a "flavor" of Liquid optimized for e-ink (800x480 resolution).
+To learn and develop plugins for my TRMNL device. This particular plugin was developed as a request for a colleague of mine.
 
-### File Purposes
+## How do I make it work?
 
-- full.liquid: Full-screen layout (800x480)
-- half_horizontal.liquid: Top/Bottom split layout
-- quadrant.liquid: 1/4 screen layout
-- settings.yml: Defines variables and polling URLs
+### Plugin liquid design information
 
-## Development Commands
+- `full.liquid`: Default view. Shows electricity at the time of execution, average daily, and a basic graph for the last 24 hours.
+- `half_horizontal.liquid` and `half_vertical.liquid`: Same thing as full.liquid, a bit more compressed and chart is smaller but no data lost.
+- `quadrant.liquid`: In order to ensure the information is visible, removed the chart. The rest of the data is implemented correctly.
 
-- Install dependencies: `pipenv install`
-- Run the app: `pipenv run main.py`
-- Test API: `curl http://localhost:3000/api`
-- Test TRMNL: `trmnlp serve`
+### Deployment
 
-## Device and Framework Info
+1. **Using init script (Recommended)**
+    Run the initialization script. Ensure that you have docker / docker compose so that no failures occur.
+    ```shell
+    ./init-dc.sh
+    ```
 
-- TRMNL OG Device: 800x480 pixel, black and white, 2-bit grayscale display.
-- Design System: https://usetrmnl.com/blog/design-system
-- Framework: https://usetrmnl.com/framework
-- Responsive Design (Important for TRMNL X): https://usetrmnl.com/framework/responsive
-  - Reason: TRMNL X is bigger,  as well as other devices that use TRMNL Firmware; ensure responsiveness for better design policy.
-- Charts: https://usetrmnl.com/framework/docs/chart
+2. **Manual Setup**
+    To deploy the API flask wrapper:
+    ```shell
+    pipenv install
+    pipenv run python main.py
+    ```
+    
+    To deploy trmnlp for development (after deploying the API locally):
+    ```shell
+    bin/trmnlp
+    ```
+
+## Previews
+
+| Full View | Half Horizontal View |
+|------------|----------------------|
+| ![Full View](media/preview_full.webp) | ![Half Horizontal View](media/preview_half_horizontal.webp) |
+
+| Half Vertical View | Quadrant View |
+|-------------------|----------------|
+| ![Half Vertical View](media/preview_half_vertical.webp) | ![Quadrant View](media/preview_quadrant.webp) |
 
 ## Design Thought Process
 
-### API Data Overview
-
+**API Data Overview**
 - Granular dataset: From 23:00 previous day to 23:00 current day, with total_price and other values.
 - perUnit value: Electricity = KWH, Gas = M3.
 - Data Structure: Gas and electricity have same datapoints, simplifying extraction.
 
-### Display Intent
+**Display Intent**
+- API does not provide next upcoming day, data comes from 23:00 from the previous day until 23:00 of the current day.
 
-- Show rolling 24 hours from current time to next 00:00 (or until available).
-- Example: At 13:00, display from 13:00 to 00:00.
-- Limitation: API likely doesn't provide next day, so stop at 00:00.
+## Contributing
+
+The project follows a modular architecture, making it easy to add new features.
+
+We welcome contributions from the community!
+
+## References
+
+- [Marktprijzen API](https://reversed.notion.site/Marktprijzen-API-89ce600a88ac4abe8c2ad89d3167a83e)
+- [Home Assistant Frank Energie const.py](https://raw.githubusercontent.com/bajansen/home-assistant-frank_energie/412c1c61eebeaa89e2b067b0d93042e446b55a01/custom_components/frank_energie/const.py)
+- [Home Assistant Frank Energie repo](https://github.com/bajansen/home-assistant-frank_energie/)
+- [TRMNLP repo](https://github.com/usetrmnl/trmnlp)
+- [TRMNL Private Plugins Templates Documentation](https://docs.usetrmnl.com/go/private-plugins/templates)
+
+## Uses:
+
+- <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" /></a>
+- <a href="https://pypi.org/project/pipenv/"><img src="https://img.shields.io/badge/Pipenv-locked-orange" /></a>
+
+### Dependencies
+
+- Flask
+- Requests
+- Gunicorn
+- Flask-Limiter
+- Flask-Caching

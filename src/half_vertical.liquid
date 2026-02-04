@@ -34,13 +34,40 @@
 
   <!-- Chart Container -->
   <div id="energy-chart" class="w--full flex--grow"></div>
-
+  
   <script type="text/javascript">
-            {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
+            // Pass raw data from Liquid (Manually serialized)
+            var rawElectricity = [
+              {% for item in electricity %}
+                { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price }} }
+                {% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ];
+            
+            var rawGas = [
+              {% for item in gas %}
+                { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price }} }
+                {% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ];
 
-            // Use the shared component to generate data arrays
-            var electricityData = {% render 'js_time_series', data: electricity, start_time: now %};
-            var gasData = {% render 'js_time_series', data: gas, start_time: now %};
+            // Filter start time
+            var startTime = new Date("{{ 'now' | date: '%Y-%m-%dT%H:00:00.000Z' }}").getTime();
+
+            function transformData(data) {
+              if (!data) return [];
+              return data
+                .filter(function(item) { return new Date(item.from).getTime() >= startTime; })
+                .map(function(item) {
+                  return [
+                    new Date(item.till).getTime(),
+                    parseFloat(item.total_price.toFixed(2))
+                  ];
+                });
+            }
+
+            var electricityData = transformData(rawElectricity);
+            var gasData = transformData(rawGas);
 
             var formattedData = [
               { name: "Electricity", data: electricityData },

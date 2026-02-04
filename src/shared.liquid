@@ -115,23 +115,6 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
 
 {% comment %}
  =============================================================================
- COMPONENT: JS Time Series
- =============================================================================
-{% endcomment %}
-
-{% template js_time_series %}
-[
-  {% for item in data %}
-    {% if start_time == nil or item.from >= start_time %}
-      ["{{ item.till | date: "%Y-%m-%dT%H:00:00.000Z" }}", {{ item.total_price | round: 2 }}]
-      {% unless forloop.last %},{% endunless %}
-    {% endif %}
-  {% endfor %}
-]
-{% endtemplate %}
-
-{% comment %}
- =============================================================================
  COMPONENT: Energy Chart
  =============================================================================
 {% endcomment %}
@@ -140,15 +123,46 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
   <div id="{{ id }}" class="w--full {% if variant == 'full' %}flex--grow{% else %}h--full{% endif %}"></div>
 
   <script type="text/javascript">
-    {% assign now = "now" | date: "%Y-%m-%dT%H:00:00.000Z" %}
-    var electricityData = {% render 'js_time_series', data: electricity, start_time: now %};
-    var gasData = {% render 'js_time_series', data: gas, start_time: now %};
+    // Pass raw data directly from backend (Manually serialized for Liquid compatibility)
+    var rawElectricity = [
+      {% for item in electricity %}
+        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price }} }
+        {% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ];
+    
+    var rawGas = [
+      {% for item in gas %}
+        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price }} }
+        {% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ];
+
+    // Filter and format data on the client side
+    var startTime = new Date("{{ 'now' | date: '%Y-%m-%dT%H:00:00.000Z' }}").getTime();
+
+    function transformData(data) {
+      if (!data) return [];
+      return data
+        .filter(function(item) { return new Date(item.from).getTime() >= startTime; })
+        .map(function(item) {
+          return [
+            new Date(item.till).getTime(),
+            parseFloat(item.total_price.toFixed(2))
+          ];
+        });
+    }
+
+    var electricityData = transformData(rawElectricity);
+    var gasData = transformData(rawGas);
 
     (function() {
       var chartConfig = {
         chart: {
           type: "spline",
-          height: null,
+          height: null, // keep null to let it fill container
+
+
           width: null,
           animation: false,
           backgroundColor: 'transparent',

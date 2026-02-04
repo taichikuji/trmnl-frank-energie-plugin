@@ -1,35 +1,49 @@
 <div class="layout layout--col h--full pb--10">
 
   <!-- Electricity Section -->
-  <div class="grid">
-    <div class="row">
-      {% render 'price_card'
-        , data: electricity
-        , label_now: "Price electricity now"
-        , label_avg: "Avg electricity price"
-        , resource_name: "Electricity"
-        , bar_color: "bg--black"
-        , show_indicator: false
-        , current_size: "small"
-      %}
-    </div>
+  <div class="grid grid--cols-2 gap--[9px]" data-adjust-grid-gaps="false">
+    {% render 'mini_stat'
+      , data: electricity
+      , label: "Elec Now"
+      , type: "current"
+    %}
+    {% render 'mini_stat'
+      , data: electricity
+      , label: "Elec Avg"
+      , type: "avg"
+    %}
   </div>
 
-  <div class="border--h-5 w--full"></div>
+  <div class="divider"></div>
 
   <!-- Gas Section -->
-  <div class="grid">
-    <div class="row">
-      {% render 'price_card'
-        , data: gas
-        , label_now: "Price gas now"
-        , label_avg: "Avg gas price"
-        , resource_name: "Gas"
-        , bar_color: "bg--gray-5"
-        , show_indicator: false
-        , current_size: "small"
-      %}
-    </div>
+  <div class="grid grid--cols-2">
+    {% render 'mini_stat'
+      , data: gas
+      , label: "Gas Now"
+      , type: "current"
+      , size: "small"
+    %}
+    {% render 'mini_stat'
+      , data: gas
+      , label: "Gas Avg"
+      , type: "avg"
+      , size: "small"
+    %}
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Legends -->
+  <div class="grid grid grid--cols-2">
+    {% render 'legend_item'
+      , label: "Electricity"
+      , color: "bg--black"
+    %}
+    {% render 'legend_item'
+      , label: "Gas"
+      , color: "bg--gray-5"
+    %}
   </div>
 
   <!-- Chart Container -->

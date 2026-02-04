@@ -9,32 +9,34 @@
         <div class="layout layout--col h--full pb--10">
 
           <!-- Electricity Section -->
-          <div class="grid">
-            <div class="row">
-              {% render 'price_card'
-                , data: electricity
-                , label_now: "Price electricity now"
-                , label_avg: "Avg electricity price"
-                , resource_name: "Electricity"
-                , bar_color: "bg--black"
-              %}
-            </div>
-          </div>
+  <div class="grid">
+    <div class="row">
+      {% render 'price_card'
+        , data: electricity
+        , label_now: "Price electricity now"
+        , label_avg: "Avg electricity price"
+        , resource_name: "Electricity"
+        , bar_color: "bg--black"
+        , show_indicator: true
+      %}
+    </div>
+  </div>
 
-          <div class="border--h-5 w--full"></div>
+  <div class="border--h-5 w--full"></div>
 
-          <!-- Gas Section -->
-          <div class="grid">
-            <div class="row">
-              {% render 'price_card'
-                , data: gas
-                , label_now: "Price gas now"
-                , label_avg: "Avg gas price"
-                , resource_name: "Gas"
-                , bar_color: "bg--gray-5"
-              %}
-            </div>
-          </div>
+  <!-- Gas Section -->
+  <div class="grid">
+    <div class="row">
+      {% render 'price_card'
+        , data: gas
+        , label_now: "Price gas now"
+        , label_avg: "Avg gas price"
+        , resource_name: "Gas"
+        , bar_color: "bg--gray-5"
+        , show_indicator: true
+      %}
+    </div>
+  </div>
 
           <!-- Chart Container -->
           {% render 'energy_chart'
@@ -48,6 +50,8 @@
         </div>
       </div>
     </div>
+  <div class="divider"></div>
+
 
     <!-- Title Bar -->
     <div class="title_bar">

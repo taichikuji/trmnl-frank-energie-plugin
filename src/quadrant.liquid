@@ -2,7 +2,7 @@
 
 <div class="layout layout--col gap--space-between">
 
-  <!-- Top Row: Electricity Now + Sparkline Chart -->
+  <!-- Top Row: Electricity Now + Elec Avg -->
   <div class="grid grid--cols-2 gap--[9px]" data-adjust-grid-gaps="false">
     {% render 'mini_stat'
       , data: electricity
@@ -10,14 +10,12 @@
       , type: "current"
       , size: "medium"
     %}
-    <div class="item">
-      {% render 'energy_chart'
-        , id: "quadrant-chart"
-        , electricity: electricity
-        , gas: gas
-        , variant: "sparkline"
-      %}
-    </div>
+    {% render 'mini_stat'
+      , data: electricity
+      , label: "Elec Avg"
+      , type: "avg"
+      , size: "medium"
+    %}
   </div>
 
   <div class="divider"></div>
@@ -35,20 +33,6 @@
       , label: "Gas Avg"
       , type: "avg"
       , size: "xsmall"
-    %}
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- Bottom Row: Legends/Indicators -->
-  <div class="grid grid grid--cols-2">
-    {% render 'legend_item'
-      , label: "Electricity"
-      , color: "bg--black"
-    %}
-    {% render 'legend_item'
-      , label: "Gas"
-      , color: "bg--gray-5"
     %}
   </div>
 

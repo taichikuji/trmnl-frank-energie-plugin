@@ -1,3 +1,5 @@
+{% render 'head_assets' %}
+
 <div class="layout layout--col h--full pb--10">
 
   <!-- Electricity Section -->
@@ -47,7 +49,6 @@
   </div>
 
   <!-- Chart Container -->
-  {% render 'chart_assets' %}
   {% render 'energy_chart'
     , id: "energy-chart"
     , electricity: electricity
@@ -55,8 +56,5 @@
     , variant: "full"
   %}
 </div>
-<div class="title_bar">
-  <img class="image" src="https://usetrmnl.com/images/plugins/weather/wi-lightning.svg">
-  <span class="title">Frank Energie</span>
-  <span class="instance">Energy Prices Chart</span>
-</div>
+
+{% render 'title_bar', instance: "Energy Prices" %}

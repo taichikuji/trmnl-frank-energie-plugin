@@ -1,3 +1,5 @@
+{% render 'head_assets' %}
+
 <div class="layout layout--col gap--space-between">
   <div class="grid h-full">
 
@@ -53,8 +55,6 @@
 
     <!-- Right Column: Chart -->
     <div class="col--span-3 col gap--space-between">
-      <!-- Import chart scripts manually since this view has no <head> -->
-      {% render 'chart_assets' %}
 
       <!-- Render the shared chart component -->
       {% render 'energy_chart'
@@ -66,9 +66,4 @@
     </div>
   </div>
 </div>
-
-<div class="title_bar">
-  <img class="image" src="https://usetrmnl.com/images/plugins/weather/wi-lightning.svg">
-  <span class="title">Frank Energie</span>
-  <span class="instance">Energy Prices Chart</span>
-</div>
+{% render 'title_bar', instance: "Energy Prices Chart" %}

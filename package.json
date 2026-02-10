@@ -1,0 +1,14 @@
+{
+  "name": "trmnl-frank-energie-plugin",
+  "version": "1.0.0",
+  "description": "Frank Energie API plugin for TRMNL",
+  "type": "module",
+  "main": "functions/api.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

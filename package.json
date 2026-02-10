@@ -18,7 +18,6 @@
     "netlify-cli": "^23.15.1"
   },
   "dependencies": {
-    "deno": "^2.6.8",
-    "node-fetch": "^3.3.2"
+    "deno": "^2.6.8"
   }
 }

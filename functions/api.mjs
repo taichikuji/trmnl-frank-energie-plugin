@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 export default async req => {
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];

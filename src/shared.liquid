@@ -19,9 +19,6 @@
 {% endcomment %}
 
 {% template head_assets %}
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
-  <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
   {% render 'chart_assets' %}
 {% endtemplate %}
 
@@ -75,7 +72,7 @@
         <div class="meta"></div>
         <div class="content">
           <span class="value value--xsmall value--tnums">
-            <div class="w--14 h--1.5 mb--2 {{ bar_color }}" style="border-radius: 20px;"></div>
+            <div class="w--14 h--1.5 mb--2 {{ bar_color }} rounded--large"></div>
           </span>
           <span class="label">{{ resource_name }}</span>
         </div>
@@ -121,7 +118,7 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
     <div class="meta"></div>
     <div class="content">
       <span class="value value--xxsmall value--tnums">
-        <div class="w--12 h--1.5 mb--2 {{ color }}" style="border-radius: 20px;"></div>
+        <div class="w--12 h--1.5 mb--2 {{ color }} rounded--large"></div>
         {{ label }}
       </span>
     </div>

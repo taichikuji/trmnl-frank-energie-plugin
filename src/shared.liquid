@@ -138,31 +138,28 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
     // Pass raw data directly from backend (Manually serialized for Liquid compatibility)
     var rawElectricity = [
       {% for item in electricity %}
-        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price }} }
+        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price | default: 0 }} }
         {% unless forloop.last %},{% endunless %}
       {% endfor %}
     ];
     
     var rawGas = [
       {% for item in gas %}
-        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price }} }
+        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price | default: 0 }} }
         {% unless forloop.last %},{% endunless %}
       {% endfor %}
     ];
 
-    // Filter and format data on the client side
-    var startTime = new Date("{{ 'now' | date: '%Y-%m-%dT%H:00:00.000Z' }}").getTime();
-
     function transformData(data) {
       if (!data) return [];
-      return data
-        .filter(function(item) { return new Date(item.from).getTime() >= startTime; })
-        .map(function(item) {
-          return [
-            new Date(item.till).getTime(),
-            parseFloat(item.total_price.toFixed(2))
-          ];
-        });
+      return data.map(function(item) {
+        var price = parseFloat(item.total_price);
+        if (isNaN(price)) { price = 0; }
+        return [
+          new Date(item.from).getTime(),
+          Math.round(price * 100) / 100
+        ];
+      });
     }
 
     var electricityData = transformData(rawElectricity);

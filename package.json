@@ -1,7 +1,7 @@
 {
   "name": "trmnl-frank-energie-plugin",
   "version": "1.0.0",
-  "description": "Frank Energie API plugin for TRMNL",
+  "description": "Frank Energie API endpoint for TRMNL plugin",
   "type": "module",
   "main": "functions/api.mjs",
   "scripts": {

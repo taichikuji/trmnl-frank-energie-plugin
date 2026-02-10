@@ -5,10 +5,20 @@
   "type": "module",
   "main": "functions/api.mjs",
   "scripts": {
+    "dev": "netlify dev",
+    "start": "netlify dev",
+    "deploy": "netlify deploy",
+    "deploy:prod": "netlify deploy --prod",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "devDependencies": {
+    "netlify-cli": "^23.15.1"
+  },
+  "dependencies": {
+    "deno": "^2.6.8",
+    "node-fetch": "^3.3.2"
+  }
 }

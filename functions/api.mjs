@@ -1,4 +1,6 @@
-export default async (req, context) => {
+import fetch from 'node-fetch';
+
+export default async req => {
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
 
@@ -29,7 +31,7 @@ export default async (req, context) => {
   `;
 
   try {
-    const response = await fetch("https://frank-graphql-prod.graphcdn.app/", {
+    const res = await fetch("https://frank-graphql-prod.graphcdn.app/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,14 +39,12 @@ export default async (req, context) => {
       body: JSON.stringify({ query }),
     });
 
-    if (!response.ok) {
-      return new Response(JSON.stringify({ error: `Failed to fetch data: ${response.status}` }), {
-        status: 502,
-        headers: { "Content-Type": "application/json" }
-      });
-    }
+    if (!res.ok) 
+      return new Response(JSON.stringify({ 
+        error: `Failed to fetch data: ${res.status}` 
+      }), { status: 502, headers: { 'Content-Type': 'application/json' } });
 
-    const jsonResponse = await response.json();
+    const jsonResponse = await res.json();
     const data = jsonResponse.data;
     const marketPrices = data?.marketPrices || {};
 
@@ -75,17 +75,18 @@ export default async (req, context) => {
     };
 
     return new Response(JSON.stringify(result), {
+      status: 200,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "public, max-age=300, must-revalidate", // 5 minutes browser cache
-        "Netlify-CDN-Cache-Control": "public, max-age=300, must-revalidate" // 5 minutes Edge cache
+        'Cache-Control': 'public, max-age=300, must-revalidate',
+        'Netlify-CDN-Cache-Control': 'public, max-age=300, must-revalidate',
+        'Content-Type': 'application/json'
       }
     });
 
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
+  } catch (err) {
+    console.error("Frank Energie API Error:", err);
+    return new Response(JSON.stringify({ 
+      error: err.message 
+    }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
-};
+}

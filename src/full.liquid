@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    {% render 'head_assets' %}
-  </head>
-  <body class="environment trmnl">
-    <div class="screen">
-      <div class="view view--full">
-        <div class="layout layout--col h--full pb--10">
+{% render 'head_assets' %}
+
+<div class="layout layout--col h--full pb--10">
 
           <!-- Electricity Section -->
   <div class="grid">
@@ -48,9 +42,5 @@
           %}
 
         </div>
-      </div>
-    </div>
   <div class="divider"></div>
     {% render 'title_bar', instance: "Energy Prices" %}
-  </body>
-</html>

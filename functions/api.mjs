@@ -1,4 +1,4 @@
-export default async req => {
+export default async () => {
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
 

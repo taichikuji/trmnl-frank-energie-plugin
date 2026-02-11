@@ -9,7 +9,16 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-polling_url: 'http://trmnl-plugin:3000/api'
+polling_url: 'https://frank-energie-api.netlify.app/api'
 polling_headers: ''
 name: Frank Energie Plugin
 refresh_interval: 1440
+custom_fields:
+- keyname: resource_type
+  field_type: select
+  name: Resource to Display
+  description: Choose which resource data to show in charts and main stats
+  options:
+  - "Electricity"
+  - "Gas"
+  default: "Electricity"

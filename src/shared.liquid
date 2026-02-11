@@ -83,6 +83,171 @@
 
 {% comment %}
  =============================================================================
+ COMPONENT: Stat Grid (Highest/Lowest/Now)
+ Usage: {% render 'stat_grid', data: electricity, currency: "€" %}
+ =============================================================================
+{% endcomment %}
+
+{% template stat_grid %}
+  {% if data.size > 0 %}
+    {% assign highest = data | sort: "total_price" | last %}
+    {% assign lowest = data | sort: "total_price" | first %}
+    
+    {% assign current_timestamp = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
+    {% assign current_hour = current_timestamp | date: "%H" %}
+    {% assign current_time_str = current_timestamp | date: "%H:%M" %}
+    
+    {% assign current_item = data[0] %}
+    
+    {% for item in data %}
+      {% assign item_time = item.from | date: "%s" %}
+      {% assign item_hour = item_time | date: "%H" %}
+      
+      {% if item_hour == current_hour %}
+        {% assign current_item = item %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% if variant == 'compact' %}
+      <div class="flex gap--space-between w--full">
+        <div class="item">
+          <div class="content">
+            <div>
+              <span class="value value--tnums value--small">{{ highest.total_price | round: 2 }}</span>
+              <span class="label label--gray">{{ currency }}</span>
+            </div>
+            <span class="label label--small">High {{ highest.from | date: "%H:%M" }}</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="content">
+            <div>
+              <span class="value value--tnums value--small">{{ lowest.total_price | round: 2 }}</span>
+              <span class="label label--gray">{{ currency }}</span>
+            </div>
+            <span class="label label--small">Low {{ lowest.from | date: "%H:%M" }}</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="content">
+            <div>
+              <span class="value value--tnums value--small">{{ current_item.total_price | round: 2 }}</span>
+              <span class="label label--gray">{{ currency }}</span>
+            </div>
+            <span class="label label--small">Now {{ current_time_str }}</span>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="grid grid--cols-3">
+        <div class="item item--emphasis-3">
+          <div class="meta"></div>
+          <div class="content">
+            <div>
+              <span class="value value--tnums value--small">{{ highest.total_price | round: 2 }}</span>
+              <span class="label label--gray">{{ currency }}</span>
+            </div>
+            <span class="label">Highest at {{ highest.from | date: "%H:%M" }}</span>
+          </div>
+        </div>
+        <div class="item item--emphasis-2">
+          <div class="meta"></div>
+          <div class="content">
+            <div>
+              <span class="value value--tnums value--small">{{ lowest.total_price | round: 2 }}</span>
+              <span class="label label--gray">{{ currency }}</span>
+            </div>
+            <span class="label">Lowest at {{ lowest.from | date: "%H:%M" }}</span>
+          </div>
+        </div>
+        <div class="item item--emphasis-1">
+          <div class="meta"></div>
+          <div class="content">
+            <div>
+              <span class="value value--tnums value--small">{{ current_item.total_price | round: 2 }}</span>
+              <span class="label label--gray">{{ currency }}</span>
+            </div>
+            <span class="label">Now at {{ current_time_str }}</span>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="grid grid--cols-3">
+      <div class="item"><div class="content"><span class="label">No Data</span></div></div>
+    </div>
+  {% endif %}
+{% endtemplate %}
+
+{% comment %}
+ =============================================================================
+ COMPONENT: Secondary Stat Grid (Now/Avg/Lowest)
+ Usage: {% render 'secondary_stat_grid', data: gas, currency: "€", label_prefix: "Gas" %}
+ =============================================================================
+{% endcomment %}
+
+{% template secondary_stat_grid %}
+  {% if data.size > 0 %}
+    {% assign highest = data | sort: "total_price" | last %}
+    
+    {% assign current_timestamp = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
+    {% assign current_hour = current_timestamp | date: "%H" %}
+    
+    {% assign current_item = data[0] %}
+    {% assign avg_val = data | map: 'total_price' | sum | divided_by: data.size %}
+    
+    {% for item in data %}
+      {% assign item_time = item.from | date: "%s" %}
+      {% assign item_hour = item_time | date: "%H" %}
+      
+      {% if item_hour == current_hour %}
+        {% assign current_item = item %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="grid grid--cols-3">
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ current_item.total_price | round: 2 }}</span>
+            <span class="label label--gray">{{ currency }}</span>
+          </div>
+          <span class="label">{{ label_prefix }} Now</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ avg_val | round: 2 }}</span>
+            <span class="label label--gray">{{ currency }}</span>
+          </div>
+          <span class="label">{{ label_prefix }} Avg</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ highest.total_price | round: 2 }}</span>
+            <span class="label label--gray">{{ currency }}</span>
+          </div>
+          <span class="label">{{ label_prefix }} High</span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="grid grid--cols-3">
+      <div class="item"><div class="content"><span class="label">No Data</span></div></div>
+    </div>
+  {% endif %}
+{% endtemplate %}
+
+{% comment %}
+ =============================================================================
  COMPONENT: Mini Stat (Quadrant View)
 Params: data, label, type, size (optional class modifier like 'xsmall')
  =============================================================================
@@ -200,26 +365,25 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
             marker: { enabled: false }
           }
         },
-        series: [{
-          data: electricityData,
-          lineWidth: 4,
-          color: "#000000",
-          name: "Electricity",
-          zIndex: 2
-        }, {
-          data: gasData,
-          lineWidth: 5,
-          name: "Gas",
-          zIndex: 1,
-          color: {
-            pattern: {
-              image: "https://usetrmnl.com/images/grayscale/gray-5.png",
-              width: 12,
-              height: 12,
-              aspectRatio: 1
+        series: [
+          {% if trmnl.plugin_settings.custom_fields_values.resource_type == 'Gas' %}
+            {
+              data: gasData,
+              lineWidth: 4,
+              color: "#000000",
+              name: "Gas",
+              zIndex: 2
             }
-          }
-        }],
+          {% else %}
+            {
+              data: electricityData,
+              lineWidth: 4,
+              color: "#000000",
+              name: "Electricity",
+              zIndex: 2
+            }
+          {% endif %}
+        ],
         tooltip: { enabled: false },
         legend: { enabled: false },
         yAxis: {
@@ -247,7 +411,20 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
             gridLineWidth: 1,
             gridLineColor: "#000000",
             tickPixelInterval: 120,
-            title: { text: null }
+            title: { text: null },
+            plotLines: [{
+              value: new Date("{{ 'now' | date: '%s' | plus: trmnl.user.utc_offset | date: '%Y-%m-%dT%H:%M:%S' }}").getTime(),
+              color: "#000000",
+              width: 2,
+              dashStyle: "Dash",
+              zIndex: 5,
+              label: {
+                text: "{{ 'now' | date: '%s' | plus: trmnl.user.utc_offset | date: '%H:%M' }}",
+                style: { fontSize: "12px", fontWeight: "bold", color: "#000000" },
+                y: -10,
+                x: 5
+              }
+            }]
           {% endif %}
         },
         credits: { enabled: false }

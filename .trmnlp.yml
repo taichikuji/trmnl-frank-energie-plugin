@@ -10,4 +10,5 @@ watch:
 custom_fields:
   resource_type: "Electricity"
 
-variables: {}
+variables:
+  trmnl: {}

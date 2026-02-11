@@ -16,25 +16,15 @@ To learn and develop plugins for my TRMNL device. This particular plugin was dev
 - `half_horizontal.liquid` and `half_vertical.liquid`: Same thing as full.liquid, a bit more compressed and chart is smaller but no data lost.
 - `quadrant.liquid`: In order to ensure the information is visible, removed the chart. The rest of the data is implemented correctly.
 
-### Deployment
+### Development
 
-1. **Using init script (Recommended)**
-    Run the initialization script. Ensure that you have docker / docker compose so that no failures occur.
-    ```shell
-    ./init-dc.sh
-    ```
+Use the TRMNL Docker image to run the local template server.
 
-2. **Manual Setup**
-    To deploy the API flask wrapper:
-    ```shell
-    pipenv install
-    pipenv run python main.py
-    ```
-    
-    To deploy trmnlp for development (after deploying the API locally):
-    ```shell
-    bin/trmnlp
-    ```
+```shell
+make serve
+```
+
+This starts a local server at http://localhost:4567 that watches for changes in your templates.
 
 ## Previews
 
@@ -70,15 +60,8 @@ We welcome contributions from the community!
 - [TRMNLP repo](https://github.com/usetrmnl/trmnlp)
 - [TRMNL Private Plugins Templates Documentation](https://docs.usetrmnl.com/go/private-plugins/templates)
 
-## Uses:
+## Uses
 
-- <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" /></a>
-- <a href="https://pypi.org/project/pipenv/"><img src="https://img.shields.io/badge/Pipenv-locked-orange" /></a>
+- Docker
+- Deno
 
-### Dependencies
-
-- Flask
-- Requests
-- Gunicorn
-- Flask-Limiter
-- Flask-Caching

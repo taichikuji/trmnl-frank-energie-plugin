@@ -11,7 +11,8 @@ static_data: ''
 polling_verb: get
 polling_url: 'https://frank-energie-api.netlify.app/api'
 polling_headers: ''
-name: Frank Energie Plugin
+icon: media/icon.svg
+name: Frank Energie
 refresh_interval: 1440
 custom_fields:
 - keyname: resource_type
@@ -22,3 +23,8 @@ custom_fields:
   - "Electricity"
   - "Gas"
   default: "Electricity"
+- keyname: author_bio
+  field_type: author_bio
+  name: Author Bio
+  description: Short support bio shown to end users
+  default: "Ivan Perez (taichikuji) - Cloud Engineer, currently Site Reliability Engineer"

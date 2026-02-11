@@ -49,7 +49,7 @@
 
       <!-- Render the shared chart component -->
       {% render 'energy_chart'
-        , id: "energy-chart"
+        , id: "energy-chart" | append_random
         , electricity: electricity
         , gas: gas
         , variant: "full"

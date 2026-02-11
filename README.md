@@ -1,56 +1,56 @@
 # trmnl-frank-energie-plugin
 
-## What is this?
+Frank Energie pricing data + TRMNL templates. This README is focused on development and running the Netlify API locally.
 
-A TRMNL Frank Energie plugin to display electricity and gas prices.
+## Requirements
 
-## Why?
+- Docker (for the TRMNL template server)
+- Netlify CLI (for the local API)
 
-To learn and develop plugins for my TRMNL device. This particular plugin was developed as a request for a colleague of mine.
+## Local development
 
-## How do I make it work?
+### TRMNL templates
 
-### Plugin liquid design information
-
-- `full.liquid`: Default view. Shows electricity at the time of execution, average daily, and a basic graph for the last 24 hours.
-- `half_horizontal.liquid` and `half_vertical.liquid`: Same thing as full.liquid, a bit more compressed and chart is smaller but no data lost.
-- `quadrant.liquid`: In order to ensure the information is visible, removed the chart. The rest of the data is implemented correctly.
-
-### Development
-
-Use the TRMNL Docker image to run the local template server.
+Run the local template server (watches files under TRMNL/src):
 
 ```shell
 make serve
 ```
 
-This starts a local server at http://localhost:4567 that watches for changes in your templates.
+This starts a local server at http://localhost:4567.
 
-## Previews
+### Netlify API (Node.js)
 
-| Full View | Half Horizontal View |
-|------------|----------------------|
-| ![Full View](media/preview_full.webp) | ![Half Horizontal View](media/preview_half_horizontal.webp) |
+The API is a Netlify function defined in functions/api.mjs and exposed at /api.
 
-| Half Vertical View | Quadrant View |
-|-------------------|----------------|
-| ![Half Vertical View](media/preview_half_vertical.webp) | ![Quadrant View](media/preview_quadrant.webp) |
+Install dependencies and start the dev server:
 
-## Design Thought Process
+```shell
+npm install
+npm run dev
+```
 
-**API Data Overview**
-- Granular dataset: From 23:00 previous day to 23:00 current day, with total_price and other values.
-- perUnit value: Electricity = KWH, Gas = M3.
-- Data Structure: Gas and electricity have same datapoints, simplifying extraction.
+This starts Netlify Dev and serves the function at http://localhost:8888/api.
 
-**Display Intent**
-- API does not provide next upcoming day, data comes from 23:00 from the previous day until 23:00 of the current day.
+## How the API works
 
-## Contributing
+- The function queries the Frank GraphQL endpoint for today in UTC.
+- It computes total_price per entry and returns electricity and gas arrays.
+- The TRMNL plugin polls the deployed endpoint configured in TRMNL/src/settings.yml.
 
-The project follows a modular architecture, making it easy to add new features.
+## Deployment
 
-We welcome contributions from the community!
+Use the Netlify CLI to deploy:
+
+```shell
+npm run deploy
+```
+
+For production:
+
+```shell
+npm run deploy:prod
+```
 
 ## References
 
@@ -59,9 +59,4 @@ We welcome contributions from the community!
 - [Home Assistant Frank Energie repo](https://github.com/bajansen/home-assistant-frank_energie/)
 - [TRMNLP repo](https://github.com/usetrmnl/trmnlp)
 - [TRMNL Private Plugins Templates Documentation](https://docs.usetrmnl.com/go/private-plugins/templates)
-
-## Uses
-
-- Docker
-- Deno
 

@@ -1,14 +1,13 @@
 # TRMNLP configuration
-# {{ env.VARIABLE }} interpolation is available here
 ---
-# auto-reload when files change (`watch: false` to disable)
 watch:
   - .trmnlp.yml
   - src
 
-# values of custom fields (defined in src/settings.yml)
-custom_fields: {}
+# This is the "proper" place. 
+# It works as {{resource_type}} in settings.yml 
+# AND maps to trmnl.plugin_settings.custom_fields_values.resource_type in Liquid.
+custom_fields:
+  resource_type: "Electricity"
 
-# override variables
-variables:
-  trmnl: {}
+variables: {}

@@ -366,7 +366,8 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
           }
         },
         series: [
-          {% if trmnl.plugin_settings.custom_fields_values.resource_type == 'Gas' %}
+          {% assign chart_resource = resource_type | default: trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
+          {% if chart_resource == 'Gas' %}
             {
               data: gasData,
               lineWidth: 4,

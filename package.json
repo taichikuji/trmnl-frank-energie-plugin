@@ -16,8 +16,5 @@
   "license": "ISC",
   "devDependencies": {
     "netlify-cli": "^23.15.1"
-  },
-  "dependencies": {
-    "deno": "^2.6.8"
   }
 }

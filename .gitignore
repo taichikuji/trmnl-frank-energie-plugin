@@ -210,7 +210,5 @@ __marimo__/
 node_modules/
 # Local Netlify folder
 .netlify
-# Deno
-deno.lock
 # trmnlp
 bin/trmnlp

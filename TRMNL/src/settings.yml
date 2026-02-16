@@ -27,4 +27,4 @@ custom_fields:
   field_type: author_bio
   name: Author Bio
   description: Short support bio shown to end users
-  default: "Ivan Perez (taichikuji) - Cloud Engineer, currently Site Reliability Engineer"
+  default: "Ivan Perez (taichikuji)"

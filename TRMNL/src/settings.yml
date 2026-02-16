@@ -27,4 +27,5 @@ custom_fields:
   field_type: author_bio
   name: Author Bio
   description: Short support bio shown to end users
+  category: "environment,finance"
   default: "Ivan Perez (taichikuji)"

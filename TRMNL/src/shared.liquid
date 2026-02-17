@@ -1,8 +1,8 @@
 {% comment %}
- =============================================================================
- COMPONENT: Chart Assets
- usage: {% render 'chart_assets' %}
- =============================================================================
+  =============================================================================
+  COMPONENT: Chart Assets
+  usage: {% render 'chart_assets' %}
+  =============================================================================
 {% endcomment %}
 
 {% template chart_assets %}
@@ -12,10 +12,10 @@
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Head Assets
- usage: {% render 'head_assets' %}
- =============================================================================
+  =============================================================================
+  COMPONENT: Head Assets
+  usage: {% render 'head_assets' %}
+  =============================================================================
 {% endcomment %}
 
 {% template head_assets %}
@@ -23,10 +23,10 @@
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Title Bar
- usage: {% render 'title_bar', instance: 'Energy Prices' %}
- =============================================================================
+  =============================================================================
+  COMPONENT: Title Bar
+  usage: {% render 'title_bar', instance: 'Energy Prices' %}
+  =============================================================================
 {% endcomment %}
 
 {% template title_bar %}
@@ -38,9 +38,9 @@
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Price Card (Full View)
- =============================================================================
+  =============================================================================
+  COMPONENT: Price Card (Full View)
+  =============================================================================
 {% endcomment %}
 
 {% template price_card %}
@@ -82,27 +82,27 @@
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Stat Grid (Highest/Lowest/Now)
- Usage: {% render 'stat_grid', data: electricity, currency: "€" %}
- =============================================================================
+  =============================================================================
+  COMPONENT: Stat Grid (Highest/Lowest/Now)
+  Usage: {% render 'stat_grid', data: electricity, currency: "€" %}
+  =============================================================================
 {% endcomment %}
 
 {% template stat_grid %}
   {% if data.size > 0 %}
     {% assign highest = data | sort: "total_price" | last %}
     {% assign lowest = data | sort: "total_price" | first %}
-    
+
     {% assign current_timestamp = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
     {% assign current_hour = current_timestamp | date: "%H" %}
     {% assign current_time_str = current_timestamp | date: "%H:%M" %}
-    
+
     {% assign current_item = data[0] %}
-    
+
     {% for item in data %}
       {% assign item_time = item.from | date: "%s" %}
       {% assign item_hour = item_time | date: "%H" %}
-      
+
       {% if item_hour == current_hour %}
         {% assign current_item = item %}
         {% break %}
@@ -175,32 +175,36 @@
     {% endif %}
   {% else %}
     <div class="grid grid--cols-3">
-      <div class="item"><div class="content"><span class="label">No Data</span></div></div>
+      <div class="item">
+        <div class="content">
+          <span class="label">No Data</span>
+        </div>
+      </div>
     </div>
   {% endif %}
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Secondary Stat Grid (Now/Avg/Lowest)
- Usage: {% render 'secondary_stat_grid', data: gas, currency: "€", label_prefix: "Gas" %}
- =============================================================================
+  =============================================================================
+  COMPONENT: Secondary Stat Grid (Now/Avg/Lowest)
+  Usage: {% render 'secondary_stat_grid', data: gas, currency: "€", label_prefix: "Gas" %}
+  =============================================================================
 {% endcomment %}
 
 {% template secondary_stat_grid %}
   {% if data.size > 0 %}
     {% assign highest = data | sort: "total_price" | last %}
-    
+
     {% assign current_timestamp = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
     {% assign current_hour = current_timestamp | date: "%H" %}
-    
+
     {% assign current_item = data[0] %}
     {% assign avg_val = data | map: 'total_price' | sum | divided_by: data.size %}
-    
+
     {% for item in data %}
       {% assign item_time = item.from | date: "%s" %}
       {% assign item_hour = item_time | date: "%H" %}
-      
+
       {% if item_hour == current_hour %}
         {% assign current_item = item %}
         {% break %}
@@ -241,16 +245,20 @@
     </div>
   {% else %}
     <div class="grid grid--cols-3">
-      <div class="item"><div class="content"><span class="label">No Data</span></div></div>
+      <div class="item">
+        <div class="content">
+          <span class="label">No Data</span>
+        </div>
+      </div>
     </div>
   {% endif %}
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Mini Stat (Quadrant View)
-Params: data, label, type, size (optional class modifier like 'xsmall')
- =============================================================================
+  =============================================================================
+  COMPONENT: Mini Stat (Quadrant View)
+  Params: data, label, type, size (optional class modifier like 'xsmall')
+  =============================================================================
 {% endcomment %}
 
 {% template mini_stat %}
@@ -273,9 +281,9 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Legend Item (Quadrant View)
- =============================================================================
+  =============================================================================
+  COMPONENT: Legend Item (Quadrant View)
+  =============================================================================
 {% endcomment %}
 
 {% template legend_item %}
@@ -291,9 +299,9 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
 {% endtemplate %}
 
 {% comment %}
- =============================================================================
- COMPONENT: Energy Chart
- =============================================================================
+  =============================================================================
+  COMPONENT: Energy Chart
+  =============================================================================
 {% endcomment %}
 
 {% template energy_chart %}
@@ -356,6 +364,7 @@ Params: data, label, type, size (optional class modifier like 'xsmall')
             }
           }
         },
+        accessibility: { enabled: false },
         title: { text: null },
         plotOptions: {
           series: {

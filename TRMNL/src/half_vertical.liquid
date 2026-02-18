@@ -1,6 +1,6 @@
 {% render 'head_assets' %}
 
-<div class="layout layout--col h--full pb--10">
+  <div class="layout layout--col h--full pb--10">
 
   {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
   {% if resource_type == 'Gas' %}
@@ -25,7 +25,7 @@
     </div>
   </div>
 
-    <!-- Secondary Stats Section -->
+  <!-- Secondary Stats Section -->
   <div class="grid">
     <div class="row">
       {% render 'secondary_stat_grid'
@@ -36,16 +36,13 @@
     </div>
   </div>
 
-  <div class="divider"></div>
+  <div class="divider">
+</div>
 
   <!-- Chart Container -->
-  {% render 'energy_chart'
-    , id: "energy-chart" | append_random
-    , electricity: electricity
-    , gas: gas
-    , variant: "full"
-    , resource_type: resource_type
+  {% render 'energy_chart', id: "energy-chart" | append_random, electricity: electricity, gas: gas, variant: "full", resource_type: resource_type
   %}
 </div>
 
-{% render 'title_bar', instance: primary_label %}
+{% render 'title_bar'
+  , instance: primary_label %}

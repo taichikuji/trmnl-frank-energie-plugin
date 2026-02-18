@@ -256,50 +256,6 @@
 
 {% comment %}
   =============================================================================
-  COMPONENT: Mini Stat (Quadrant View)
-  Params: data, label, type, size (optional class modifier like 'xsmall')
-  =============================================================================
-{% endcomment %}
-
-{% template mini_stat %}
-  {% assign val = "N/A" %}
-  {% if data.size > 0 %}
-    {% if type == 'avg' %}
-      {% assign val = data | map: 'total_price' | sum | divided_by: data.size | round: 2 %}
-    {% else %}
-      {% assign val = data[0].total_price | round: 2 %}
-    {% endif %}
-  {% endif %}
-
-  <div class="item">
-    <div class="meta"></div>
-    <div class="content">
-      <span class="value {% if size %}value--{{ size }}{% endif %} value--tnums">€{{ val }}</span>
-      <span class="label">{{ label }}</span>
-    </div>
-  </div>
-{% endtemplate %}
-
-{% comment %}
-  =============================================================================
-  COMPONENT: Legend Item (Quadrant View)
-  =============================================================================
-{% endcomment %}
-
-{% template legend_item %}
-  <div class="item">
-    <div class="meta"></div>
-    <div class="content">
-      <span class="value value--xxsmall value--tnums">
-        <div class="w--12 h--1.5 mb--2 {{ color }} rounded--large"></div>
-        {{ label }}
-      </span>
-    </div>
-  </div>
-{% endtemplate %}
-
-{% comment %}
-  =============================================================================
   COMPONENT: Energy Chart
   =============================================================================
 {% endcomment %}

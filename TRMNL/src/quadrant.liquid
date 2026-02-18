@@ -1,41 +1,43 @@
 {% render 'head_assets' %}
 
-<div class="layout layout--col gap--space-between">
+  <div class="layout layout--col h--full pb--10">
 
-  <!-- Top Row: Electricity Now + Elec Avg -->
-  <div class="grid grid--cols-2 gap--[9px]" data-adjust-grid-gaps="false">
-    {% render 'mini_stat'
-      , data: electricity
-      , label: "Elec Now"
-      , type: "current"
-      , size: "medium"
-    %}
-    {% render 'mini_stat'
-      , data: electricity
-      , label: "Elec Avg"
-      , type: "avg"
-      , size: "medium"
-    %}
+  {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
+  {% if resource_type == 'Gas' %}
+    {% assign primary_data = gas %}
+    {% assign primary_label = "Gas" %}
+    {% assign secondary_data = electricity %}
+    {% assign secondary_label = "Elec" %}
+  {% else %}
+    {% assign primary_data = electricity %}
+    {% assign primary_label = "Electricity" %}
+    {% assign secondary_data = gas %}
+    {% assign secondary_label = "Gas" %}
+  {% endif %}
+
+
+  <!-- Primary Resource Section -->
+  <div class="grid">
+    <div class="row">
+      {% render 'stat_grid'
+        , data: primary_data
+        , currency: "€"
+      %}
+    </div>
   </div>
 
-  <div class="divider"></div>
-
-  <!-- Middle Row: Gas Now + Gas Average -->
-  <div class="grid grid--cols-2">
-    {% render 'mini_stat'
-      , data: gas
-      , label: "Gas Now"
-      , type: "current"
-      , size: "xsmall"
-    %}
-    {% render 'mini_stat'
-      , data: gas
-      , label: "Gas Avg"
-      , type: "avg"
-      , size: "xsmall"
-    %}
+  <!-- Secondary Resource Section -->
+  <div class="grid">
+    <div class="row">
+      {% render 'secondary_stat_grid'
+        , data: secondary_data
+        , currency: "€"
+        , label_prefix: secondary_label
+      %}
+    </div>
   </div>
 
 </div>
 
-{% render 'title_bar', instance: "Energy Prices" %}
+{% render 'title_bar'
+  , instance: primary_label %}

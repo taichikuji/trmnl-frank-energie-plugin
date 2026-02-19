@@ -46,8 +46,8 @@
 
 {% template stat_grid %}
   {% if data.size > 0 %}
-    {% assign highest = data | sort: "total_price" | last %}
-    {% assign lowest = data | sort: "total_price" | first %}
+    {% assign highest = data | sort: "marketPrice" | last %}
+    {% assign lowest = data | sort: "marketPrice" | first %}
 
     {% assign current_timestamp = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
     {% assign current_hour = current_timestamp | date: "%H" %}
@@ -65,12 +65,16 @@
       {% endif %}
     {% endfor %}
 
+    {% assign highest_total = highest.marketPrice | plus: highest.marketPriceTax | plus: highest.sourcingMarkupPrice | plus: highest.energyTaxPrice %}
+    {% assign lowest_total = lowest.marketPrice | plus: lowest.marketPriceTax | plus: lowest.sourcingMarkupPrice | plus: lowest.energyTaxPrice %}
+    {% assign current_total = current_item.marketPrice | plus: current_item.marketPriceTax | plus: current_item.sourcingMarkupPrice | plus: current_item.energyTaxPrice %}
+
     {% if variant == 'compact' %}
       <div class="flex gap--space-between w--full">
         <div class="item">
           <div class="content">
             <div>
-              <span class="value value--tnums value--small">{{ highest.total_price | round: 2 }}</span>
+              <span class="value value--tnums value--small">{{ highest_total | round: 2 }}</span>
               <span class="label label--gray">{{ currency }}</span>
             </div>
             <span class="label label--small">High @ {{ highest.from | date: "%H:%M" }}</span>
@@ -79,7 +83,7 @@
         <div class="item">
           <div class="content">
             <div>
-              <span class="value value--tnums value--small">{{ lowest.total_price | round: 2 }}</span>
+              <span class="value value--tnums value--small">{{ lowest_total | round: 2 }}</span>
               <span class="label label--gray">{{ currency }}</span>
             </div>
             <span class="label label--small">Low @ {{ lowest.from | date: "%H:%M" }}</span>
@@ -88,7 +92,7 @@
         <div class="item">
           <div class="content">
             <div>
-              <span class="value value--tnums value--small">{{ current_item.total_price | round: 2 }}</span>
+              <span class="value value--tnums value--small">{{ current_total | round: 2 }}</span>
               <span class="label label--gray">{{ currency }}</span>
             </div>
             <span class="label label--small">Now @ {{ current_time_str }}</span>
@@ -101,7 +105,7 @@
           <div class="meta"></div>
           <div class="content">
             <div>
-              <span class="value value--tnums value--small">{{ highest.total_price | round: 2 }}</span>
+              <span class="value value--tnums value--small">{{ highest_total | round: 2 }}</span>
               <span class="label label--gray">{{ currency }}</span>
             </div>
             <span class="label">Highest @ {{ highest.from | date: "%H:%M" }}</span>
@@ -111,7 +115,7 @@
           <div class="meta"></div>
           <div class="content">
             <div>
-              <span class="value value--tnums value--small">{{ lowest.total_price | round: 2 }}</span>
+              <span class="value value--tnums value--small">{{ lowest_total | round: 2 }}</span>
               <span class="label label--gray">{{ currency }}</span>
             </div>
             <span class="label">Lowest @ {{ lowest.from | date: "%H:%M" }}</span>
@@ -121,7 +125,7 @@
           <div class="meta"></div>
           <div class="content">
             <div>
-              <span class="value value--tnums value--small">{{ current_item.total_price | round: 2 }}</span>
+              <span class="value value--tnums value--small">{{ current_total | round: 2 }}</span>
               <span class="label label--gray">{{ currency }}</span>
             </div>
             <span class="label">Now @ {{ current_time_str }}</span>
@@ -149,8 +153,8 @@
 
 {% template secondary_stat_grid %}
   {% if data.size > 0 %}
-    {% assign highest = data | sort: "total_price" | last %}
-    {% assign lowest = data | sort: "total_price" | first %}
+    {% assign highest = data | sort: "marketPrice" | last %}
+    {% assign lowest = data | sort: "marketPrice" | first %}
 
     {% assign current_timestamp = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
     {% assign current_hour = current_timestamp | date: "%H" %}
@@ -168,12 +172,16 @@
       {% endif %}
     {% endfor %}
 
+    {% assign highest_total = highest.marketPrice | plus: highest.marketPriceTax | plus: highest.sourcingMarkupPrice | plus: highest.energyTaxPrice %}
+    {% assign lowest_total = lowest.marketPrice | plus: lowest.marketPriceTax | plus: lowest.sourcingMarkupPrice | plus: lowest.energyTaxPrice %}
+    {% assign current_total = current_item.marketPrice | plus: current_item.marketPriceTax | plus: current_item.sourcingMarkupPrice | plus: current_item.energyTaxPrice %}
+
     <div class="grid grid--cols-3">
       <div class="item item--emphasis-3">
         <div class="meta"></div>
         <div class="content">
           <div>
-            <span class="value value--tnums value--small">{{ highest.total_price | round: 2 }}</span>
+            <span class="value value--tnums value--small">{{ highest_total | round: 2 }}</span>
             <span class="label label--gray">{{ currency }}</span>
           </div>
           <span class="label">{{ label_prefix }} | Highest @ {{ highest.from | date: "%H:%M" }}</span>
@@ -183,7 +191,7 @@
         <div class="meta"></div>
         <div class="content">
           <div>
-            <span class="value value--tnums value--small">{{ lowest.total_price | round: 2 }}</span>
+            <span class="value value--tnums value--small">{{ lowest_total | round: 2 }}</span>
             <span class="label label--gray">{{ currency }}</span>
           </div>
           <span class="label">{{ label_prefix }} | Lowest @ {{ lowest.from | date: "%H:%M" }}</span>
@@ -193,7 +201,7 @@
         <div class="meta"></div>
         <div class="content">
           <div>
-            <span class="value value--tnums value--small">{{ current_item.total_price | round: 2 }}</span>
+            <span class="value value--tnums value--small">{{ current_total | round: 2 }}</span>
             <span class="label label--gray">{{ currency }}</span>
           </div>
           <span class="label">{{ label_prefix }} | Now @ {{ current_time_str }}</span>
@@ -221,16 +229,17 @@
   <div id="{{ id }}" class="w--full {% if variant == 'full' %}flex--grow{% else %}h--full{% endif %}"></div>
 
   <script type="text/javascript">
-    // Pass raw data directly from backend (Manually serialized for Liquid compatibility)
     var rawElectricity = [
       {% for item in electricity %}
-        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price | default: 0 }} }
+        {% assign t_price = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
+        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ t_price | default: 0 }} }
         {% unless forloop.last %},{% endunless %}
       {% endfor %}
     ];
     var rawGas = [
       {% for item in gas %}
-        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ item.total_price | default: 0 }} }
+        {% assign t_price = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
+        { "from": "{{ item.from }}", "till": "{{ item.till }}", "total_price": {{ t_price | default: 0 }} }
         {% unless forloop.last %},{% endunless %}
       {% endfor %}
     ];

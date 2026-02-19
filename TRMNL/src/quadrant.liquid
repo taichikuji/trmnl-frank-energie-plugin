@@ -4,17 +4,16 @@
 
   {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
   {% if resource_type == 'Gas' %}
-    {% assign primary_data = gas %}
+    {% assign primary_data = data.marketPrices.gasPrices %}
     {% assign primary_label = "Gas" %}
-    {% assign secondary_data = electricity %}
+    {% assign secondary_data = data.marketPrices.electricityPrices %}
     {% assign secondary_label = "Elec" %}
   {% else %}
-    {% assign primary_data = electricity %}
+    {% assign primary_data = data.marketPrices.electricityPrices %}
     {% assign primary_label = "Electricity" %}
-    {% assign secondary_data = gas %}
+    {% assign secondary_data = data.marketPrices.gasPrices %}
     {% assign secondary_label = "Gas" %}
   {% endif %}
-
 
   <!-- Primary Resource Section -->
   <div class="grid">
@@ -22,6 +21,7 @@
       {% render 'stat_grid'
         , data: primary_data
         , currency: "€"
+        , label_prefix: primary_label
       %}
     </div>
   </div>
@@ -38,6 +38,5 @@
   </div>
 
 </div>
-
 {% render 'title_bar'
   , instance: primary_label %}

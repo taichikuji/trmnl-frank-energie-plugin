@@ -208,7 +208,5 @@ __marimo__/
 
 # node_modules
 node_modules/
-# Local Netlify folder
-.netlify
 # trmnlp
 bin/trmnlp

@@ -1,56 +1,14 @@
 # trmnl-frank-energie-plugin
 
-Frank Energie pricing data + TRMNL templates. This README is focused on development and running the Netlify API locally.
+Frank Energie pricing data + TRMNL templates. This README is focused on development and improving the project.
 
 ## Requirements
 
-- Docker (for the TRMNL template server)
-- Netlify CLI (for the local API)
+- A TRMNL capable device!
 
 ## Local development
 
-### TRMNL templates
-
-Run the local template server (watches files under TRMNL/src):
-
-```shell
-make serve
-```
-
-This starts a local server at http://localhost:4567.
-
-### Netlify API (Node.js)
-
-The API is a Netlify function defined in functions/api.mjs and exposed at /api.
-
-Install dependencies and start the dev server:
-
-```shell
-npm install
-npm run dev
-```
-
-This starts Netlify Dev and serves the function at http://localhost:8888/api.
-
-## How the API works
-
-- The function queries the Frank GraphQL endpoint for today in UTC.
-- It computes total_price per entry and returns electricity and gas arrays.
-- The TRMNL plugin polls the deployed endpoint configured in TRMNL/src/settings.yml.
-
-## Deployment
-
-Use the Netlify CLI to deploy:
-
-```shell
-npm run deploy
-```
-
-For production:
-
-```shell
-npm run deploy:prod
-```
+Run the template through the TRMNL's Web UI for testing. It's awesome!
 
 ## References
 

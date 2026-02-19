@@ -8,9 +8,13 @@ strategy: polling
 no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
-polling_verb: get
-polling_url: 'https://frank-energie-api.netlify.app/api'
+polling_verb: post
+polling_url: 'https://frank-graphql-prod.graphcdn.app/'
 polling_headers: ''
+polling_body: |
+  {
+    "query": "query MarketPrices { marketPrices(date:\"{{ 'now' | date: '%Y-%m-%d' }}\") { electricityPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } gasPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } } }"
+  }
 icon: media/icon.svg
 name: Frank Energie
 refresh_interval: 1440

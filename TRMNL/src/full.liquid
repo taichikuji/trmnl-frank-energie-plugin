@@ -3,7 +3,7 @@
   <div class="layout layout--col h--full pb--10">
 
   {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
-  {% if resource_type == 'Gas' %}
+  {% if resource_type == 'gas' %}
     {% assign primary_data = data.marketPrices.gasPrices %}
     {% assign primary_label = "Gas" %}
     {% assign secondary_data = data.marketPrices.electricityPrices %}

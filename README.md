@@ -2,6 +2,7 @@
 
 Frank Energie pricing data + TRMNL templates. This README is focused on development and improving the project.
 
+Install it [here](https://trmnl.com/recipes/245095)!
 ## Requirements
 
 - A TRMNL capable device!

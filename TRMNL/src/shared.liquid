@@ -232,18 +232,13 @@
       var chartConfig = {
         chart: {
           type: "spline",
-          height: null, // keep null to let it fill container
+          height: null,
           width: null,
           animation: false,
           backgroundColor: 'transparent',
           spacing: [10, 10, 5, 10],
           events: {
             load: function() {
-              // Force reflow after chart loads to ensure pattern fills render correctly
-              var chart = this;
-              setTimeout(function() {
-                chart.reflow();
-              }, 50);
             }
           }
         },
@@ -318,10 +313,14 @@
       // Wait for DOM to be ready before creating chart
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-          Highcharts.chart("{{ id }}", chartConfig);
+          requestAnimationFrame(function() {
+            Highcharts.chart("{{ id }}", chartConfig);
+          });
         });
       } else {
-        Highcharts.chart("{{ id }}", chartConfig);
+        requestAnimationFrame(function() {
+          Highcharts.chart("{{ id }}", chartConfig);
+        });
       }
     })();
   </script>

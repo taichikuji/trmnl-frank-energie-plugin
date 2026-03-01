@@ -58,7 +58,7 @@
                 <span class="value value--tnums value--small lg:value--base">{{ p_highest_total | round: 2 }}</span>
                 <span class="label label--gray lg:label--large">€</span>
               </div>
-              <span class="label">{{ primary_label }} | Highest @ {{ p_highest.from | date: "%H:%M" }}</span>
+              <span class="label">Highest @ {{ p_highest.from | date: "%H:%M" }}</span>
             </div>
           </div>
           <div class="item item--emphasis-2">
@@ -68,7 +68,7 @@
                 <span class="value value--tnums value--small lg:value--base">{{ p_lowest_total | round: 2 }}</span>
                 <span class="label label--gray lg:label--large">€</span>
               </div>
-              <span class="label">{{ primary_label }} | Lowest @ {{ p_lowest.from | date: "%H:%M" }}</span>
+              <span class="label">Lowest @ {{ p_lowest.from | date: "%H:%M" }}</span>
             </div>
           </div>
           <div class="item item--emphasis-1">
@@ -78,7 +78,7 @@
                 <span class="value value--tnums value--small lg:value--base">{{ p_current_total | round: 2 }}</span>
                 <span class="label label--gray lg:label--large">€</span>
               </div>
-              <span class="label">{{ primary_label }} | Now @ {{ _cur_str }}</span>
+              <span class="label">Now @ {{ _cur_str }}</span>
             </div>
           </div>
         </div>

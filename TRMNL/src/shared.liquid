@@ -44,7 +44,7 @@
 {% endcomment %}
 
 {% template energy_chart %}
-  <div id="{{ id }}" class="w--full grow"></div>
+  <div id="{{ id }}" class="{{ chart_class | default: 'w--full grow' }}"></div>
 
   <script type="text/javascript">
     var rawElectricity = [

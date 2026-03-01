@@ -114,7 +114,10 @@
         </div>
       </div>
     </div>
-  {% endif %}
+{% endif %}
+
+  <!-- Chart -->
+  {% render 'energy_chart', id: "energy-chart" | append_random, electricity: primary_data, gas: secondary_data, resource_type: resource_type, chart_class: "w--full grow hidden lg:block" %}
 
 </div>
 {% render 'title_bar'

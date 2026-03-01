@@ -55,8 +55,8 @@
             <div class="meta"></div>
             <div class="content">
               <div>
-                <span class="value value--tnums value--small">{{ p_highest_total | round: 2 }}</span>
-                <span class="label label--gray">€</span>
+                <span class="value value--tnums value--small lg:value--base">{{ p_highest_total | round: 2 }}</span>
+                <span class="label label--gray lg:label--large">€</span>
               </div>
               <span class="label">{{ primary_label }} | Highest @ {{ p_highest.from | date: "%H:%M" }}</span>
             </div>
@@ -65,8 +65,8 @@
             <div class="meta"></div>
             <div class="content">
               <div>
-                <span class="value value--tnums value--small">{{ p_lowest_total | round: 2 }}</span>
-                <span class="label label--gray">€</span>
+                <span class="value value--tnums value--small lg:value--base">{{ p_lowest_total | round: 2 }}</span>
+                <span class="label label--gray lg:label--large">€</span>
               </div>
               <span class="label">{{ primary_label }} | Lowest @ {{ p_lowest.from | date: "%H:%M" }}</span>
             </div>
@@ -75,8 +75,8 @@
             <div class="meta"></div>
             <div class="content">
               <div>
-                <span class="value value--tnums value--small">{{ p_current_total | round: 2 }}</span>
-                <span class="label label--gray">€</span>
+                <span class="value value--tnums value--small lg:value--base">{{ p_current_total | round: 2 }}</span>
+                <span class="label label--gray lg:label--large">€</span>
               </div>
               <span class="label">{{ primary_label }} | Now @ {{ _cur_str }}</span>
             </div>
@@ -91,8 +91,8 @@
             <div class="meta"></div>
             <div class="content">
               <div>
-                <span class="value value--tnums value--small">{{ s_highest_total | round: 2 }}</span>
-                <span class="label label--gray">€</span>
+                <span class="value value--tnums value--small lg:value--base">{{ s_highest_total | round: 2 }}</span>
+                <span class="label label--gray lg:label--large">€</span>
               </div>
               <span class="label">{{ secondary_label }} | Highest @ {{ s_highest.from | date: "%H:%M" }}</span>
             </div>
@@ -101,8 +101,8 @@
             <div class="meta"></div>
             <div class="content">
               <div>
-                <span class="value value--tnums value--small">{{ s_lowest_total | round: 2 }}</span>
-                <span class="label label--gray">€</span>
+                <span class="value value--tnums value--small lg:value--base">{{ s_lowest_total | round: 2 }}</span>
+                <span class="label label--gray lg:label--large">€</span>
               </div>
               <span class="label">{{ secondary_label }} | Lowest @ {{ s_lowest.from | date: "%H:%M" }}</span>
             </div>
@@ -111,8 +111,8 @@
             <div class="meta"></div>
             <div class="content">
               <div>
-                <span class="value value--tnums value--small">{{ s_current_total | round: 2 }}</span>
-                <span class="label label--gray">€</span>
+                <span class="value value--tnums value--small lg:value--base">{{ s_current_total | round: 2 }}</span>
+                <span class="label label--gray lg:label--large">€</span>
               </div>
               <span class="label">{{ secondary_label }} | Now @ {{ _cur_str }}</span>
             </div>

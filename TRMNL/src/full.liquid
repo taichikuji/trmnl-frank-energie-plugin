@@ -13,29 +13,118 @@
     {% assign primary_label = "Electricity" %}
     {% assign secondary_data = data.marketPrices.gasPrices %}
     {% assign secondary_label = "Gas" %}
+{% endif %}
+
+  {% comment %} Compute primary stats {% endcomment %}
+  {% assign p_highest = primary_data | sort: "marketPrice" | last %}
+  {% assign p_lowest = primary_data | sort: "marketPrice" | first %}
+  {% assign _ts = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
+  {% assign _cur_hour = _ts | date: "%H" %}
+  {% assign _cur_str = _ts | date: "%H:%M" %}
+  {% assign p_current = primary_data[0] %}
+  {% for item in primary_data %}
+    {% assign _ih = item.from | date: "%s" | date: "%H" %}
+    {% if _ih == _cur_hour %}
+      {% assign p_current = item %}{% break %}{% endif %}
+  {% endfor %}
+  {% assign p_highest_total = p_highest.marketPrice | plus: p_highest.marketPriceTax | plus: p_highest.sourcingMarkupPrice | plus: p_highest.energyTaxPrice %}
+  {% assign p_lowest_total = p_lowest.marketPrice | plus: p_lowest.marketPriceTax | plus: p_lowest.sourcingMarkupPrice | plus: p_lowest.energyTaxPrice %}
+{% assign p_current_total = p_current.marketPrice | plus: p_current.marketPriceTax | plus: p_current.sourcingMarkupPrice | plus: p_current.energyTaxPrice %}
+
+  {% comment %} Compute secondary stats {% endcomment %}
+  {% assign s_highest = secondary_data | sort: "marketPrice" | last %}
+  {% assign s_lowest = secondary_data | sort: "marketPrice" | first %}
+  {% assign s_current = secondary_data[0] %}
+  {% for item in secondary_data %}
+    {% assign _ih = item.from | date: "%s" | date: "%H" %}
+    {% if _ih == _cur_hour %}
+      {% assign s_current = item %}{% break %}{% endif %}
+  {% endfor %}
+  {% assign s_highest_total = s_highest.marketPrice | plus: s_highest.marketPriceTax | plus: s_highest.sourcingMarkupPrice | plus: s_highest.energyTaxPrice %}
+  {% assign s_lowest_total = s_lowest.marketPrice | plus: s_lowest.marketPriceTax | plus: s_lowest.sourcingMarkupPrice | plus: s_lowest.energyTaxPrice %}
+  {% assign s_current_total = s_current.marketPrice | plus: s_current.marketPriceTax | plus: s_current.sourcingMarkupPrice | plus: s_current.energyTaxPrice %}
+
+  <!-- Row 1: Primary Resource Stats -->
+  {% if primary_data.size > 0 %}
+    <div class="grid grid--cols-3">
+      <div class="item item--emphasis-3">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ p_highest_total | round: 2 }}</span>
+            <span class="label label--gray">€</span>
+          </div>
+          <span class="label">{{ primary_label }} | Highest @ {{ p_highest.from | date: "%H:%M" }}</span>
+        </div>
+      </div>
+      <div class="item item--emphasis-2">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ p_lowest_total | round: 2 }}</span>
+            <span class="label label--gray">€</span>
+          </div>
+          <span class="label">{{ primary_label }} | Lowest @ {{ p_lowest.from | date: "%H:%M" }}</span>
+        </div>
+      </div>
+      <div class="item item--emphasis-1">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ p_current_total | round: 2 }}</span>
+            <span class="label label--gray">€</span>
+          </div>
+          <span class="label">{{ primary_label }} | Now @ {{ _cur_str }}</span>
+        </div>
+      </div>
+    </div>
   {% endif %}
 
-  <!-- Primary Resource Section -->
-  <div class="grid">
-    <div class="row">
-      {% render 'stat_grid'
-        , data: primary_data
-        , currency: "€"
-        , label_prefix: primary_label
-      %}
+  <!-- Row 2: Secondary Resource Stats -->
+  {% if secondary_data.size > 0 %}
+    <div class="grid grid--cols-3">
+      <div class="item item--emphasis-3">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ s_highest_total | round: 2 }}</span>
+            <span class="label label--gray">€</span>
+          </div>
+          <span class="label">{{ secondary_label }} | Highest @ {{ s_highest.from | date: "%H:%M" }}</span>
+        </div>
+      </div>
+      <div class="item item--emphasis-2">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ s_lowest_total | round: 2 }}</span>
+            <span class="label label--gray">€</span>
+          </div>
+          <span class="label">{{ secondary_label }} | Lowest @ {{ s_lowest.from | date: "%H:%M" }}</span>
+        </div>
+      </div>
+      <div class="item item--emphasis-1">
+        <div class="meta"></div>
+        <div class="content">
+          <div>
+            <span class="value value--tnums value--small">{{ s_current_total | round: 2 }}</span>
+            <span class="label label--gray">€</span>
+          </div>
+          <span class="label">{{ secondary_label }} | Now @ {{ _cur_str }}</span>
+        </div>
+      </div>
     </div>
-  </div>
+  {% endif %}
 
-  <!-- Secondary Resource Section -->
-  <div class="grid">
-    <div class="row">
-      {% render 'secondary_stat_grid'
-        , data: secondary_data
-        , currency: "€"
-        , label_prefix: secondary_label
-      %}
+  {% unless primary_data.size > 0 or secondary_data.size > 0 %}
+    <div class="grid grid--cols-3">
+      <div class="item">
+        <div class="content">
+          <span class="label">No Data</span>
+        </div>
+      </div>
     </div>
-  </div>
+  {% endunless %}
 
   <div class="divider">
 </div>

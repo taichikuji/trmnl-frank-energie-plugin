@@ -1,6 +1,6 @@
 {% render 'head_assets' %}
 
-  <div class="layout layout--col gap--space-between">
+  <div class="layout layout--col gap--distribute">
 
   {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
   {% if resource_type == 'gas' %}
@@ -44,10 +44,10 @@
   {% assign s_lowest_total = s_lowest.marketPrice | plus: s_lowest.marketPriceTax | plus: s_lowest.sourcingMarkupPrice | plus: s_lowest.energyTaxPrice %}
   {% assign s_current_total = s_current.marketPrice | plus: s_current.marketPriceTax | plus: s_current.sourcingMarkupPrice | plus: s_current.energyTaxPrice %}
 
-    <div class="grid h-full">
+    <div class="grid h--full">
 
     <!-- Left Column: Stats (3-col grid fixed, constrained to col--span-3 width) -->
-    <div class="col--span-3 col gap--space-between">
+    <div class="col--span-3 col gap--distribute">
       <!-- Row 1: Primary Resource Stats -->
       {% if primary_data.size > 0 %}
         <div class="grid grid--cols-3">
@@ -130,7 +130,7 @@
     </div>
 
     <!-- Right Column: Chart -->
-    <div class="col--span-3 col gap--space-between">
+    <div class="col--span-3 col gap--distribute">
       {% render 'energy_chart', id: "energy-chart" | append_random, electricity: primary_data, gas: secondary_data, resource_type: resource_type %}
     </div>
   </div>

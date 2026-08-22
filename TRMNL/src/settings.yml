@@ -17,7 +17,7 @@ polling_body: |
   }
 icon: media/icon.svg
 name: Frank Energie
-refresh_interval: 1440
+refresh_interval: 60
 custom_fields:
 - keyname: resource_type
   field_type: select

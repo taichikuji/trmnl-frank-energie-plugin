@@ -1,21 +1,30 @@
-# trmnl-frank-energie-plugin
+# Frank Energie for TRMNL
 
-Frank Energie pricing data + TRMNL templates. This README is focused on development and improving the project.
+A TRMNL plugin for today's Frank Energie electricity and gas prices, with full, half and quadrant layouts for TRMNL OG, BWRY and TRMNL X.
 
 Install it [here](https://trmnl.com/recipes/245095)!
-## Requirements
 
-- A TRMNL capable device!
+## Features
+
+- Current all-in price with the correct €/kWh or €/m³ unit
+- Daily average, lowest and highest prices
+- Hourly price chart with the current period highlighted
+- Electricity or gas as the primary resource
+- Palette-aware rendering for grayscale and BWRY displays
+- Responsive TRMNL X landscape and portrait layouts
+- Clear unavailable-data state
 
 ## Local development
 
-Run the template through the TRMNL's Web UI for testing. It's awesome!
+Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), select a primary resource in `.trmnlp.yml`, and preview all four layouts. Run the rendering checks with `pnpm test`.
 
 ## References
 
-- [Marktprijzen API](https://reversed.notion.site/Marktprijzen-API-89ce600a88ac4abe8c2ad89d3167a83e)
-- [Home Assistant Frank Energie const.py](https://raw.githubusercontent.com/bajansen/home-assistant-frank_energie/412c1c61eebeaa89e2b067b0d93042e446b55a01/custom_components/frank_energie/const.py)
-- [Home Assistant Frank Energie repo](https://github.com/bajansen/home-assistant-frank_energie/)
-- [TRMNLP repo](https://github.com/usetrmnl/trmnlp)
-- [TRMNL Private Plugins Templates Documentation](https://docs.usetrmnl.com/go/private-plugins/templates)
+- [Frank Energie dynamic pricing](https://www.frankenergie.nl/nl/dynamisch-energiecontract)
+- [Frank Energie price API reference](https://indyjonesnl.github.io/frank-energie-price-history/api/)
+- [Home Assistant Frank Energie integration](https://github.com/bajansen/home-assistant-frank_energie/)
+- [TRMNL screen templating](https://docs.trmnl.com/go/private-plugins/templates)
+- [TRMNL X guide](https://trmnl.com/framework/docs/3.3/trmnl_x_guide)
+- [TRMNL color palettes](https://trmnl.com/framework/docs/3.3/color_palettes)
+- [TRMNL adaptive charts](https://trmnl.com/framework/docs/3.3/chart)
 

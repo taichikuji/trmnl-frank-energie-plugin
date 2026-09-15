@@ -9,11 +9,11 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: post
-polling_url: 'https://frank-graphql-prod.graphcdn.app/'
+polling_url: 'https://graphql.frankenergie.nl/'
 polling_headers: ''
 polling_body: |
   {
-    "query": "query MarketPrices { marketPrices(date:\"{{ 'now' | date: '%Y-%m-%d' }}\") { electricityPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } gasPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } } }"
+    "query": "query MarketPrices { marketPrices(date:\"{{ 'now' | date: '%s' | plus: trmnl.user.utc_offset | date: '%Y-%m-%d' }}\") { electricityPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } gasPrices { from till marketPrice marketPriceTax sourcingMarkupPrice energyTaxPrice perUnit } } }"
   }
 icon: media/icon.svg
 name: Frank Energie

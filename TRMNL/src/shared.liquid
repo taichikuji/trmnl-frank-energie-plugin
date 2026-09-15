@@ -1,187 +1,217 @@
-{% comment %}
-  =============================================================================
-  COMPONENT: Chart Assets
-  usage: {% render 'chart_assets' %}
-  =============================================================================
-{% endcomment %}
+{% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' | downcase %}
+{% assign market_prices = data.marketPrices %}
+{% if resource_type == 'gas' %}
+  {% assign primary_data = market_prices.gasPrices %}
+  {% assign primary_label = 'Gas' %}
+  {% assign primary_unit = '€/m³' %}
+  {% assign secondary_data = market_prices.electricityPrices %}
+  {% assign secondary_label = 'Electricity' %}
+  {% assign secondary_unit = '€/kWh' %}
+{% else %}
+  {% assign primary_data = market_prices.electricityPrices %}
+  {% assign primary_label = 'Electricity' %}
+  {% assign primary_unit = '€/kWh' %}
+  {% assign secondary_data = market_prices.gasPrices %}
+  {% assign secondary_label = 'Gas' %}
+  {% assign secondary_unit = '€/m³' %}
+{% endif %}
 
-{% template chart_assets %}
-  <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
-  <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts-more.js"></script>
-  <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
-{% endtemplate %}
+{% assign now_epoch = 'now' | date: '%s' | plus: 0 %}
+{% assign utc_offset = trmnl.user.utc_offset | default: 0 | plus: 0 %}
+{% assign local_now_epoch = now_epoch | plus: utc_offset %}
+{% assign local_time = local_now_epoch | date: '%H:%M' %}
+{% assign local_day = local_now_epoch | date: '%a %d %b' %}
+{% assign p_sum = 0 %}
+{% assign p_current_total = 0 %}
+{% assign p_current_from = 0 %}
+{% assign p_current_till = 0 %}
+{% assign p_lowest_total = 0 %}
+{% assign p_lowest_from = 0 %}
+{% assign p_highest_total = 0 %}
+{% assign p_highest_from = 0 %}
+{% assign p_current_found = false %}
+{% for item in primary_data %}
+  {% assign total = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
+  {% assign from_epoch = item.from | date: '%s' | plus: 0 %}
+  {% assign till_epoch = item.till | date: '%s' | plus: 0 %}
+  {% assign p_sum = p_sum | plus: total %}
+  {% if forloop.first or total < p_lowest_total %}
+    {% assign p_lowest_total = total %}
+    {% assign p_lowest_from = from_epoch %}
+  {% endif %}
+  {% if forloop.first or total > p_highest_total %}
+    {% assign p_highest_total = total %}
+    {% assign p_highest_from = from_epoch %}
+  {% endif %}
+  {% if now_epoch >= from_epoch and now_epoch < till_epoch %}
+    {% assign p_current_total = total %}
+    {% assign p_current_from = from_epoch %}
+    {% assign p_current_till = till_epoch %}
+    {% assign p_current_found = true %}
+  {% elsif forloop.first and p_current_found == false %}
+    {% assign p_current_total = total %}
+    {% assign p_current_from = from_epoch %}
+    {% assign p_current_till = till_epoch %}
+  {% endif %}
+{% endfor %}
+{% if primary_data.size > 0 %}{% assign p_average_total = p_sum | divided_by: primary_data.size %}{% else %}{% assign p_average_total = 0 %}{% endif %}
+{% assign p_delta = p_current_total | minus: p_average_total %}
+{% if p_average_total != 0 %}{% assign p_delta_percent = p_delta | times: 100 | divided_by: p_average_total | round %}{% else %}{% assign p_delta_percent = 0 %}{% endif %}
+{% assign p_delta_abs = p_delta_percent | abs %}
+{% if p_delta_percent < 0 %}
+  {% assign p_trend = '↓ ' | append: p_delta_abs | append: '% below average' %}
+{% elsif p_delta_percent > 0 %}
+  {% assign p_trend = '↑ ' | append: p_delta_abs | append: '% above average' %}
+{% else %}
+  {% assign p_trend = 'At today’s average' %}
+{% endif %}
+{% assign p_current_from_local = p_current_from | plus: utc_offset %}
+{% assign p_current_till_local = p_current_till | plus: utc_offset %}
+{% assign p_lowest_from_local = p_lowest_from | plus: utc_offset %}
+{% assign p_highest_from_local = p_highest_from | plus: utc_offset %}
 
-{% comment %}
-  =============================================================================
-  COMPONENT: Head Assets
-  usage: {% render 'head_assets' %}
-  =============================================================================
-{% endcomment %}
-
-{% template head_assets %}
-  {% render 'chart_assets' %}
-{% endtemplate %}
-
-{% comment %}
-  =============================================================================
-  COMPONENT: Title Bar
-  usage: {% render 'title_bar', instance: 'Energy Prices' %}
-  =============================================================================
-{% endcomment %}
+{% assign s_sum = 0 %}
+{% assign s_current_total = 0 %}
+{% assign s_current_found = false %}
+{% for item in secondary_data %}
+  {% assign total = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
+  {% assign from_epoch = item.from | date: '%s' | plus: 0 %}
+  {% assign till_epoch = item.till | date: '%s' | plus: 0 %}
+  {% assign s_sum = s_sum | plus: total %}
+  {% if now_epoch >= from_epoch and now_epoch < till_epoch %}
+    {% assign s_current_total = total %}
+    {% assign s_current_found = true %}
+  {% elsif forloop.first and s_current_found == false %}
+    {% assign s_current_total = total %}
+  {% endif %}
+{% endfor %}
+{% if secondary_data.size > 0 %}{% assign s_average_total = s_sum | divided_by: secondary_data.size %}{% else %}{% assign s_average_total = 0 %}{% endif %}
 
 {%- capture svg_logo -%}
-<svg xmlns="http://www.w3.org/2000/svg" height="512" width="512" viewBox="0 0 180 180">
-  <path
-    d="M65.5 164.6C31.7 151.3 12.4 121.8 14.1 86 15.7 51.9 43 21.4 77.6 15.2c50.4-9.1 95.9 32.5 91.2 83.4-4.4 49-52.9 81.3-100.5 66.9-.8-.3-1.6-.5-2.8-.9zm8.3-47.2c0 5.9 1.1 12.2-6.1 15.4-.9.4-1.7 3.4-1.2 4.3 1 1.3 3 2.7 4.7 2.7 9 .3 18 .3 26.9 0 1.7 0 4.4-1.7 4.7-3.1.4-1.4-1.6-3.4-2.6-5.1-1.5-2.5-3.9-5-4.2-7.7-.5-7.3-.2-14.6-.2-22V85.8c3.9 0 7.1.1 10.2 0 3.1-.1 5-1.7 5-5s-1.8-4.8-5-4.8H95.7c.7-7.9-1.6-15.3 3-22.2 1.4 2 2.1 4.1 2.8 6.2 1.8 5.4 6 7.4 11.4 5.4 5-1.8 8.2-6.8 7.7-12.1-.5-5.5-4.7-9.7-10.6-10.2-3.6-.2-7.4-.2-11 .1-13.6 1.4-23.5 11.4-25.1 25-.3 2.4-.5 4.9-.8 7.2-3.8 1.6-10.3-1.7-10.6 5-.2 7.8 7.2 4.1 11.3 6.1v30.9z" fill="#000000"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <path d="M65.5 164.6C31.7 151.3 12.4 121.8 14.1 86 15.7 51.9 43 21.4 77.6 15.2c50.4-9.1 95.9 32.5 91.2 83.4-4.4 49-52.9 81.3-100.5 66.9-.8-.3-1.6-.5-2.8-.9zm8.3-47.2c0 5.9 1.1 12.2-6.1 15.4-.9.4-1.7 3.4-1.2 4.3 1 1.3 3 2.7 4.7 2.7 9 .3 18 .3 26.9 0 1.7 0 4.4-1.7 4.7-3.1.4-1.4-1.6-3.4-2.6-5.1-1.5-2.5-3.9-5-4.2-7.7-.5-7.3-.2-14.6-.2-22V85.8c3.9 0 7.1.1 10.2 0 3.1-.1 5-1.7 5-5s-1.8-4.8-5-4.8H95.7c.7-7.9-1.6-15.3 3-22.2 1.4 2 2.1 4.1 2.8 6.2 1.8 5.4 6 7.4 11.4 5.4 5-1.8 8.2-6.8 7.7-12.1-.5-5.5-4.7-9.7-10.6-10.2-3.6-.2-7.4-.2-11 .1-13.6 1.4-23.5 11.4-25.1 25-.3 2.4-.5 4.9-.8 7.2-3.8 1.6-10.3-1.7-10.6 5-.2 7.8 7.2 4.1 11.3 6.1v30.9z" fill="#000"/>
 </svg>
 {%- endcapture -%}
-{% template title_bar %}
+
+<style>
+  .frank-board { gap: 8px; }
+  .frank-heading { display: flex; align-items: baseline; justify-content: space-between; width: 100%; gap: 10px; }
+  .frank-heading-copy { min-width: 0; }
+  .frank-heading-meta { white-space: nowrap; }
+  .frank-overview { display: grid; grid-template-columns: 1.35fr repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; }
+  .frank-card { position: relative; box-sizing: border-box; width: 100%; min-width: 0; padding: 8px 10px 8px 14px; border: 1px solid currentColor; overflow: hidden; }
+  .frank-card-rail { position: absolute; inset: 0 auto 0 0; width: 5px; }
+  .frank-card--current, .frank-card--current .value, .frank-card--current .label { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
+  .frank-card .value { display: block; line-height: 1; white-space: nowrap; }
+  .frank-card--compact .value { display: inline; }
+  .frank-card .frank-unit { margin-left: 3px; }
+  .frank-card .frank-caption { display: block; margin-top: 4px; }
+  .frank-chart { width: 100%; min-height: 0; flex: 1 1 auto; }
+  .frank-secondary { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 5px 10px; border: 1px solid currentColor; }
+  .frank-secondary-value { white-space: nowrap; font-weight: bold; }
+  .frank-empty { margin: auto; text-align: center; }
+  .frank-split { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 10px; width: 100%; min-height: 0; flex: 1 1 auto; }
+  .frank-mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; min-height: 0; }
+  .frank-board--half_horizontal .frank-card { padding: 5px 7px 5px 11px; }
+  .frank-board--half_horizontal .frank-card .frank-caption { margin-top: 2px; }
+  .frank-board--half_vertical .frank-card--current { min-height: 106px; padding: 6px 12px 6px 16px; }
+  .frank-board--half_vertical .frank-chart { min-height: 145px; }
+  .frank-three-up { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: 100%; }
+  .frank-board--quadrant .frank-card--current { min-height: 76px; padding: 6px 10px 6px 14px; }
+  .frank-board--quadrant .frank-overview { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .frank-board--quadrant .frank-heading { gap: 5px; }
+  .screen--1bit:not([class*="screen--color-"]) .frank-card--current,
+  .screen--2bit:not([class*="screen--color-"]) .frank-card--current,
+  .screen--4bit:not([class*="screen--color-"]) .frank-card--current { background: var(--white) !important; background-image: none !important; }
+  .screen--1bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail,
+  .screen--2bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail,
+  .screen--4bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail { background: var(--black) !important; }
+  .screen--lg .frank-board { gap: 14px; }
+  .screen--lg .frank-overview { gap: 14px; }
+  .screen--lg .frank-card { padding: 14px 16px 14px 22px; }
+  .screen--lg .frank-card-rail { width: 7px; }
+  .screen--lg .frank-secondary { padding: 10px 16px; }
+  .screen--lg .frank-split { gap: 18px; }
+  .screen--lg .frank-mini-grid, .screen--lg .frank-three-up { gap: 12px; }
+  .screen--lg .frank-board--half_vertical .frank-chart { min-height: 320px; }
+  .screen--lg.screen--portrait .frank-board--full .frank-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+</style>
+
+{% template frank_title_bar %}
   <div class="title_bar">
-    <img
-      class="image"
-      src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}"
-      alt="Frank Energie logo">
-    <span class="title">{{ title | default: 'Frank Energie' }}</span>
-    <span class="instance">{{ instance | default: "Energy Prices" }}</span>
+    <img class="image image--adaptive" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie">
+    <span class="title">{{ title | default: 'Frank Energie' | escape }}</span>
+    <span class="instance">{{ instance }}</span>
   </div>
 {% endtemplate %}
 
-{% comment %}
-  =============================================================================
-  COMPONENT: Energy Chart
-  =============================================================================
-{% endcomment %}
+{% template price_card %}
+  <div class="frank-card {{ class }}">
+    <span class="frank-card-rail {% if class contains 'frank-card--current' %}bg--red{% else %}bg--black{% endif %}"></span>
+    <div>
+      <span class="value value--tnums {{ value_class | default: 'value--small lg:value--base' }}">€{{ value | round: 3 }}</span>
+      {% if unit != blank %}<span class="label label--small lg:label--base frank-unit">{{ unit }}</span>{% endif %}
+    </div>
+    <span class="label label--small lg:label--base frank-caption" data-clamp="1">{{ caption }}</span>
+  </div>
+{% endtemplate %}
 
 {% template energy_chart %}
-  <div id="{{ id }}" class="{{ chart_class | default: 'w--full grow' }}"></div>
-
-  <script type="text/javascript">
-    var rawElectricity = [
-      {% for item in electricity %}
-        {% assign t_price = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
-        { "from": "{{ item.from | date: '%Y-%m-%dT%H:%M:%SZ' }}", "till": "{{ item.till | date: '%Y-%m-%dT%H:%M:%SZ' }}", "total_price": {{ t_price | default: 0 }} }
-        {% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    ];
-    
-    var rawGas = [
-      {% for item in gas %}
-        {% assign t_price = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
-        { "from": "{{ item.from | date: '%Y-%m-%dT%H:%M:%SZ' }}", "till": "{{ item.till | date: '%Y-%m-%dT%H:%M:%SZ' }}", "total_price": {{ t_price | default: 0 }} }
-        {% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    ];
-
-    function transformData(data) {
-      if (!data) return [];
-      return data.map(function(item) {
-        var price = parseFloat(item.total_price);
-        if (isNaN(price)) { price = 0; }
-        return [
-          new Date(item.from).getTime(),
-          Math.round(price * 100) / 100
-        ];
-      });
-    }
-
-    var electricityData = transformData(rawElectricity);
-    var gasData = transformData(rawGas);
-
-    (function() {
-      var chartConfig = {
-        chart: {
-          type: "spline",
-          height: null,
-          width: null,
-          animation: false,
-          backgroundColor: 'transparent',
-          spacing: [10, 10, 5, 10],
-          events: {
-            load: function() {
-            }
-          }
-        },
-        accessibility: { enabled: false },
-        title: { text: null },
-        plotOptions: {
-          series: {
-            animation: false,
-            enableMouseTracking: false,
-            states: { hover: { enabled: false } },
-            marker: { enabled: false }
-          }
-        },
-        series: [
-          {% assign chart_resource = resource_type | default: trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
-          {% if chart_resource == 'Gas' %}
-            {
-              data: gasData,
-              lineWidth: 4,
-              color: "#000000",
-              name: "Gas",
-              zIndex: 2
-            }
-          {% else %}
-            {
-              data: electricityData,
-              lineWidth: 4,
-              color: "#000000",
-              name: "Electricity",
-              zIndex: 2
-            }
-          {% endif %}
-        ],
-        tooltip: { enabled: false },
-        legend: { enabled: false },
-        yAxis: {
-          labels: { style: { fontSize: "16px", color: "#000000" } },
-          gridLineDashStyle: "shortdot",
-          gridLineWidth: 1,
-          gridLineColor: "#000000",
-          tickAmount: 5,
-          title: { text: null }
-        },
-        xAxis: {
-          type: "datetime",
-          labels: { style: { fontSize: "16px", color: "#000000" }, padding: 5, y: 25 },
-          lineWidth: 0,
-          gridLineDashStyle: "dot",
-          tickWidth: 1,
-          tickLength: 0,
-          gridLineWidth: 1,
-          gridLineColor: "#000000",
-          tickPixelInterval: 120,
-          title: { text: null },
-          plotLines: [{
-            value: new Date("{{ 'now' | date: '%s' | plus: trmnl.user.utc_offset | date: '%Y-%m-%dT%H:%M:%S' }}").getTime(),
-            color: "#000000",
-            width: 2,
-            dashStyle: "Dash",
-            zIndex: 5,
-            label: {
-              text: "{{ 'now' | date: '%s' | plus: trmnl.user.utc_offset | date: '%H:%M' }}",
-              style: { fontSize: "12px", fontWeight: "bold", color: "#000000" },
-              y: -10,
-              x: 5
-            }
-          }]
-        },
-        credits: { enabled: false }
-      };
-
-      // Wait for DOM to be ready before creating chart
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-          requestAnimationFrame(function() {
-            Highcharts.chart("{{ id }}", chartConfig);
-          });
-        });
-      } else {
-        requestAnimationFrame(function() {
-          Highcharts.chart("{{ id }}", chartConfig);
-        });
+  <div id="{{ id }}" class="frank-chart {{ chart_class }}"></div>
+  <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+  <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+  <script>
+    (function () {
+      var raw = [
+        {% for item in series %}
+          {% assign total = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
+          {% assign from_utc_epoch = item.from | date: '%s' | plus: 0 %}
+          {% assign from_epoch = from_utc_epoch | plus: utc_offset %}
+          {% assign till_epoch = item.till | date: '%s' | plus: 0 %}
+          { x: {{ from_epoch | times: 1000 }}, y: {{ total | round: 5 }}, current: {% if now_epoch >= from_utc_epoch and now_epoch < till_epoch %}true{% else %}false{% endif %} }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ];
+      function ready(callback) {
+        var tries = 0;
+        (function attempt() {
+          if (window.Highcharts && window.TRMNLCharts && window.TRMNLPaint) return callback();
+          if (++tries < 200) setTimeout(attempt, 50);
+        })();
       }
+      ready(function () {
+        var el = "{{ id }}";
+        TRMNLCharts.watch(el, function () {
+          var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
+          var base = TRMNLCharts.paint("yellow-50", { el: el });
+          var active = TRMNLCharts.paint("red-50", { el: el });
+          var ink = TRMNLPaint.textColor("default", { el: el });
+          var points = raw.map(function (point) {
+            return { x: point.x, y: point.y, color: point.current ? active : base };
+          });
+          return Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
+            chart: { type: "column", height: null, spacing: px([4, 4, 2, 4]) },
+            plotOptions: {
+              series: { animation: false, enableMouseTracking: false },
+              column: { borderWidth: px(1), borderColor: ink, pointPadding: 0.04, groupPadding: 0.03 }
+            },
+            series: [{ data: points, name: "{{ primary_label }}", showInLegend: false }],
+            xAxis: {
+              type: "datetime",
+              tickPixelInterval: px(100),
+              labels: { format: "{value:%H:%M}" },
+              plotLines: [{ value: {{ local_now_epoch | times: 1000 }}, color: ink, width: px(2), dashStyle: "Dash", zIndex: 5 }]
+            },
+            yAxis: {
+              title: { text: null },
+              tickAmount: 4,
+              labels: { format: "€{value:.2f}" }
+            },
+            title: { text: null },
+            tooltip: { enabled: false },
+            credits: { enabled: false }
+          }));
+        });
+      });
     })();
   </script>
 {% endtemplate %}

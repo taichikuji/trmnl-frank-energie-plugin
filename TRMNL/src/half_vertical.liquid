@@ -1,139 +1,32 @@
-{% render 'head_assets' %}
+<div class="layout layout--col layout--top frank-board frank-board--half_vertical">
+  <div class="frank-heading border--h-50 pb--2">
+    <div class="frank-heading-copy">
+      <span class="title lg:title--large">{{ primary_label }} prices</span>
+      <span class="label label--small lg:label--base">All-in · {{ primary_unit }}</span>
+    </div>
+    <span class="label label--small lg:label--base frank-heading-meta">{{ local_time }}</span>
+  </div>
 
-  <div class="layout layout--col h--full pb--10">
-
-  {% assign resource_type = trmnl.plugin_settings.custom_fields_values.resource_type | default: 'Electricity' %}
-  {% if resource_type == 'gas' %}
-    {% assign primary_data = data.marketPrices.gasPrices %}
-    {% assign primary_label = "Gas" %}
-    {% assign secondary_data = data.marketPrices.electricityPrices %}
-    {% assign secondary_label = "Elec" %}
-  {% else %}
-    {% assign primary_data = data.marketPrices.electricityPrices %}
-    {% assign primary_label = "Electricity" %}
-    {% assign secondary_data = data.marketPrices.gasPrices %}
-    {% assign secondary_label = "Gas" %}
-{% endif %}
-
-  {% comment %} Compute primary stats {% endcomment %}
-  {% assign p_highest = primary_data | sort: "marketPrice" | last %}
-  {% assign p_lowest = primary_data | sort: "marketPrice" | first %}
-  {% assign _ts = "now" | date: "%s" | plus: trmnl.user.utc_offset %}
-  {% assign _cur_hour = _ts | date: "%H" %}
-  {% assign _cur_str = _ts | date: "%H:%M" %}
-  {% assign p_current = primary_data[0] %}
-  {% for item in primary_data %}
-    {% assign _ih = item.from | date: "%s" | date: "%H" %}
-    {% if _ih == _cur_hour %}
-      {% assign p_current = item %}{% break %}{% endif %}
-  {% endfor %}
-  {% assign p_highest_total = p_highest.marketPrice | plus: p_highest.marketPriceTax | plus: p_highest.sourcingMarkupPrice | plus: p_highest.energyTaxPrice %}
-  {% assign p_lowest_total = p_lowest.marketPrice | plus: p_lowest.marketPriceTax | plus: p_lowest.sourcingMarkupPrice | plus: p_lowest.energyTaxPrice %}
-{% assign p_current_total = p_current.marketPrice | plus: p_current.marketPriceTax | plus: p_current.sourcingMarkupPrice | plus: p_current.energyTaxPrice %}
-
-  {% comment %} Compute secondary stats {% endcomment %}
-  {% assign s_highest = secondary_data | sort: "marketPrice" | last %}
-  {% assign s_lowest = secondary_data | sort: "marketPrice" | first %}
-  {% assign s_current = secondary_data[0] %}
-  {% for item in secondary_data %}
-    {% assign _ih = item.from | date: "%s" | date: "%H" %}
-    {% if _ih == _cur_hour %}
-      {% assign s_current = item %}{% break %}{% endif %}
-  {% endfor %}
-  {% assign s_highest_total = s_highest.marketPrice | plus: s_highest.marketPriceTax | plus: s_highest.sourcingMarkupPrice | plus: s_highest.energyTaxPrice %}
-  {% assign s_lowest_total = s_lowest.marketPrice | plus: s_lowest.marketPriceTax | plus: s_lowest.sourcingMarkupPrice | plus: s_lowest.energyTaxPrice %}
-  {% assign s_current_total = s_current.marketPrice | plus: s_current.marketPriceTax | plus: s_current.sourcingMarkupPrice | plus: s_current.energyTaxPrice %}
-
-  <!-- Row 1: Primary Resource Stats -->
   {% if primary_data.size > 0 %}
-    <div class="grid grid--cols-3">
-      <div class="item item--emphasis-3">
-        <div class="meta"></div>
-        <div class="content">
-          <div>
-            <span class="value value--tnums value--small lg:value--base">{{ p_highest_total | round: 2 }}</span>
-            <span class="label label--gray lg:label--large">€</span>
-          </div>
-          <span class="label">Highest @ {{ p_highest.from | date: "%H:%M" }}</span>
-        </div>
-      </div>
-      <div class="item item--emphasis-2">
-        <div class="meta"></div>
-        <div class="content">
-          <div>
-            <span class="value value--tnums value--small lg:value--base">{{ p_lowest_total | round: 2 }}</span>
-            <span class="label label--gray lg:label--large">€</span>
-          </div>
-          <span class="label">Lowest @ {{ p_lowest.from | date: "%H:%M" }}</span>
-        </div>
-      </div>
-      <div class="item item--emphasis-1">
-        <div class="meta"></div>
-        <div class="content">
-          <div>
-            <span class="value value--tnums value--small lg:value--base">{{ p_current_total | round: 2 }}</span>
-            <span class="label label--gray lg:label--large">€</span>
-          </div>
-          <span class="label">Now @ {{ _cur_str }}</span>
-        </div>
-      </div>
+    {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
+    {% render 'price_card', value: p_current_total, unit: primary_unit, caption: current_caption, class: 'frank-card--current bg--yellow text--black', value_class: 'value--large lg:value--xlarge' %}
+    {% render 'energy_chart', id: 'frank-chart-half-vertical', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
+    <div class="frank-three-up">
+      {% render 'price_card', value: p_average_total, caption: 'Average', value_class: 'value--xsmall lg:value--small' %}
+      {% capture low_caption %}Low · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
+      {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--xsmall lg:value--small' %}
+      {% capture high_caption %}High · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
+      {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--xsmall lg:value--small' %}
     </div>
+    {% if secondary_data.size > 0 %}
+      <div class="frank-secondary">
+        <span class="label lg:label--large">{{ secondary_label }}</span>
+        <span class="value value--tnums value--xsmall lg:value--small frank-secondary-value">€{{ s_current_total | round: 3 }}</span>
+        <span class="label label--small lg:label--base">{{ secondary_unit }}</span>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="frank-empty"><span class="title lg:title--xlarge">Price data unavailable</span></div>
   {% endif %}
-
-  <!-- Row 2: Secondary Resource Stats -->
-  {% if secondary_data.size > 0 %}
-    <div class="grid grid--cols-3">
-      <div class="item item--emphasis-3">
-        <div class="meta"></div>
-        <div class="content">
-          <div>
-            <span class="value value--tnums value--small lg:value--base">{{ s_highest_total | round: 2 }}</span>
-            <span class="label label--gray lg:label--large">€</span>
-          </div>
-          <span class="label">{{ secondary_label }} | Highest @ {{ s_highest.from | date: "%H:%M" }}</span>
-        </div>
-      </div>
-      <div class="item item--emphasis-2">
-        <div class="meta"></div>
-        <div class="content">
-          <div>
-            <span class="value value--tnums value--small lg:value--base">{{ s_lowest_total | round: 2 }}</span>
-            <span class="label label--gray lg:label--large">€</span>
-          </div>
-          <span class="label">{{ secondary_label }} | Lowest @ {{ s_lowest.from | date: "%H:%M" }}</span>
-        </div>
-      </div>
-      <div class="item item--emphasis-1">
-        <div class="meta"></div>
-        <div class="content">
-          <div>
-            <span class="value value--tnums value--small lg:value--base">{{ s_current_total | round: 2 }}</span>
-            <span class="label label--gray lg:label--large">€</span>
-          </div>
-          <span class="label">{{ secondary_label }} | Now @ {{ _cur_str }}</span>
-        </div>
-      </div>
-    </div>
-  {% endif %}
-
-  {% unless primary_data.size > 0 or secondary_data.size > 0 %}
-    <div class="grid grid--cols-3">
-      <div class="item">
-        <div class="content">
-          <span class="label">No Data</span>
-        </div>
-      </div>
-    </div>
-  {% endunless %}
-
-  <div class="divider">
 </div>
-
-  <!-- Chart Container -->
-  {% render 'energy_chart', id: "energy-chart" | append_random, electricity: primary_data, gas: secondary_data, resource_type: resource_type %}
-
-</div>
-{% render 'title_bar'
-  , svg_logo: svg_logo 
-  , title: trmnl.plugin_settings.instance_name
-  , instance: primary_label %}
+{% render 'frank_title_bar', svg_logo: svg_logo, title: trmnl.plugin_settings.instance_name, instance: primary_label %}

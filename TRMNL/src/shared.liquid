@@ -87,6 +87,11 @@
 {% endfor %}
 {% if secondary_data.size > 0 %}{% assign s_average_total = s_sum | divided_by: secondary_data.size %}{% else %}{% assign s_average_total = 0 %}{% endif %}
 
+{% template head_assets %}
+  <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+  <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+{% endtemplate %}
+
 {%- capture svg_logo -%}
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
   <path d="M65.5 164.6C31.7 151.3 12.4 121.8 14.1 86 15.7 51.9 43 21.4 77.6 15.2c50.4-9.1 95.9 32.5 91.2 83.4-4.4 49-52.9 81.3-100.5 66.9-.8-.3-1.6-.5-2.8-.9zm8.3-47.2c0 5.9 1.1 12.2-6.1 15.4-.9.4-1.7 3.4-1.2 4.3 1 1.3 3 2.7 4.7 2.7 9 .3 18 .3 26.9 0 1.7 0 4.4-1.7 4.7-3.1.4-1.4-1.6-3.4-2.6-5.1-1.5-2.5-3.9-5-4.2-7.7-.5-7.3-.2-14.6-.2-22V85.8c3.9 0 7.1.1 10.2 0 3.1-.1 5-1.7 5-5s-1.8-4.8-5-4.8H95.7c.7-7.9-1.6-15.3 3-22.2 1.4 2 2.1 4.1 2.8 6.2 1.8 5.4 6 7.4 11.4 5.4 5-1.8 8.2-6.8 7.7-12.1-.5-5.5-4.7-9.7-10.6-10.2-3.6-.2-7.4-.2-11 .1-13.6 1.4-23.5 11.4-25.1 25-.3 2.4-.5 4.9-.8 7.2-3.8 1.6-10.3-1.7-10.6 5-.2 7.8 7.2 4.1 11.3 6.1v30.9z" fill="#000"/>
@@ -158,8 +163,6 @@
 
 {% template energy_chart %}
   <div id="{{ id }}" class="frank-chart {{ chart_class }}"></div>
-  <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
-  <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
   <script>
     (function () {
       var raw = [
@@ -174,12 +177,24 @@
       function ready(callback) {
         var tries = 0;
         (function attempt() {
-          if (window.Highcharts && window.TRMNLCharts && window.TRMNLPaint) return callback();
+          if (window.Highcharts) return callback();
           if (++tries < 200) setTimeout(attempt, 50);
         })();
       }
       ready(function () {
         var el = "{{ id }}";
+        if (!window.TRMNLCharts || !window.TRMNLPaint) {
+          var screen = document.getElementById(el).closest(".screen");
+          var bwry = screen && screen.className.indexOf("color-4bwry") !== -1;
+          return Highcharts.chart(el, {
+            chart: { type: "column", height: null, animation: false, backgroundColor: "transparent", spacing: [4, 4, 2, 4] },
+            plotOptions: { series: { animation: false, enableMouseTracking: false }, column: { borderWidth: 1, borderColor: "#000", pointPadding: 0.04, groupPadding: 0.03 } },
+            series: [{ data: raw.map(function (point) { return { x: point.x, y: point.y, color: point.current ? (bwry ? "#e60012" : "#000") : (bwry ? "#f6d32d" : "#aaa") }; }), showInLegend: false }],
+            xAxis: { type: "datetime", tickPixelInterval: 100, labels: { format: "{value:%H:%M}" }, plotLines: [{ value: {{ local_now_epoch | times: 1000 }}, color: "#000", width: 2, dashStyle: "Dash", zIndex: 5 }] },
+            yAxis: { title: { text: null }, tickAmount: 4, labels: { format: "€{value:.2f}" } },
+            title: { text: null }, tooltip: { enabled: false }, credits: { enabled: false }
+          });
+        }
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
           var base = TRMNLCharts.paint("yellow-50", { el: el });

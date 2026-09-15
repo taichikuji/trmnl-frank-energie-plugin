@@ -45,8 +45,10 @@ test('statistics use the displayed all-in total', async () => {
 test('full and half layouts use adaptive TRMNL charts', async () => {
   for (const mode of ['full', 'half_horizontal', 'half_vertical']) {
     const html = await render(mode, fixtures.normal);
+    assert.ok(html.indexOf('highcharts/12.3.0/highcharts.js') < html.indexOf('class="frank-chart'));
     assert.match(html, /TRMNLCharts\.watch/);
     assert.match(html, /TRMNLCharts\.paint\("yellow-50"/);
+    assert.match(html, /if \(!window\.TRMNLCharts \|\| !window\.TRMNLPaint\)/);
     assert.doesNotMatch(html, /color:\s*["']#000000/);
   }
   assert.doesNotMatch(await render('quadrant', fixtures.normal), /Highcharts\.chart/);

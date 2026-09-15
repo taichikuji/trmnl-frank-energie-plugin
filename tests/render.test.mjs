@@ -49,7 +49,7 @@ test('full and half layouts use adaptive TRMNL charts', async () => {
     assert.match(html, /TRMNLCharts\.watch/);
     assert.match(html, /TRMNLCharts\.paint\("yellow-50"/);
     assert.match(html, /if \(!window\.TRMNLCharts \|\| !window\.TRMNLPaint\)/);
-    assert.match(html, /clientHeight \|\| null/);
+    assert.match(html, /class="frank-chart w--full grow/);
     assert.match(html, /DOMContentLoaded/);
     assert.match(html, /requestAnimationFrame\(build\)/);
     assert.doesNotMatch(html, /color:\s*["']#000000/);

@@ -162,7 +162,7 @@
 {% endtemplate %}
 
 {% template energy_chart %}
-  <div id="{{ id }}" class="frank-chart {{ chart_class }}"></div>
+  <div id="{{ id }}" class="frank-chart w--full grow {{ chart_class }}"></div>
   <script>
     (function () {
       var raw = [
@@ -183,12 +183,11 @@
       }
       function build() {
         var el = "{{ id }}";
-        var chartHeight = document.getElementById(el).clientHeight || null;
         if (!window.TRMNLCharts || !window.TRMNLPaint) {
           var screen = document.getElementById(el).closest(".screen");
           var bwry = screen && screen.className.indexOf("color-4bwry") !== -1;
           return Highcharts.chart(el, {
-            chart: { type: "column", height: chartHeight, animation: false, backgroundColor: "transparent", spacing: [4, 4, 2, 4] },
+            chart: { type: "column", height: null, animation: false, backgroundColor: "transparent", spacing: [4, 4, 2, 4] },
             plotOptions: { series: { animation: false, enableMouseTracking: false }, column: { borderWidth: 1, borderColor: "#000", pointPadding: 0.04, groupPadding: 0.03 } },
             series: [{ data: raw.map(function (point) { return { x: point.x, y: point.y, color: point.current ? (bwry ? "#e60012" : "#000") : (bwry ? "#f6d32d" : "#aaa") }; }), showInLegend: false }],
             xAxis: { type: "datetime", tickPixelInterval: 100, labels: { format: "{value:%H:%M}" }, plotLines: [{ value: {{ local_now_epoch | times: 1000 }}, color: "#000", width: 2, dashStyle: "Dash", zIndex: 5 }] },
@@ -205,7 +204,7 @@
             return { x: point.x, y: point.y, color: point.current ? active : base };
           });
           return Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
-            chart: { type: "column", height: chartHeight, spacing: px([4, 4, 2, 4]) },
+            chart: { type: "column", height: null, spacing: px([4, 4, 2, 4]) },
             plotOptions: {
               series: { animation: false, enableMouseTracking: false },
               column: { borderWidth: px(1), borderColor: ink, pointPadding: 0.04, groupPadding: 0.03 }

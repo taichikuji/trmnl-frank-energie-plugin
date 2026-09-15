@@ -183,9 +183,9 @@
       }
       function build() {
         var el = "{{ id }}";
+        var screen = document.getElementById(el).closest(".screen");
+        var bwry = screen && screen.classList.contains("screen--color-4bwry");
         if (!window.TRMNLCharts || !window.TRMNLPaint) {
-          var screen = document.getElementById(el).closest(".screen");
-          var bwry = screen && screen.className.indexOf("color-4bwry") !== -1;
           return Highcharts.chart(el, {
             chart: { type: "column", height: null, animation: false, backgroundColor: "transparent", spacing: [4, 4, 2, 4] },
             plotOptions: { series: { animation: false, enableMouseTracking: false }, column: { borderWidth: 1, borderColor: "#000", pointPadding: 0.04, groupPadding: 0.03 } },
@@ -197,8 +197,8 @@
         }
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-          var base = TRMNLCharts.paint("yellow-50", { el: el });
-          var active = TRMNLCharts.paint("red-50", { el: el });
+          var base = bwry ? "#ffff00" : TRMNLCharts.paint("yellow-50", { el: el });
+          var active = bwry ? "#ff0000" : TRMNLCharts.paint("red-50", { el: el });
           var ink = TRMNLPaint.textColor("default", { el: el });
           var points = raw.map(function (point) {
             return { x: point.x, y: point.y, color: point.current ? active : base };

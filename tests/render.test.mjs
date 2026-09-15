@@ -48,6 +48,8 @@ test('full and half layouts use adaptive TRMNL charts', async () => {
     assert.ok(html.indexOf('highcharts/12.3.0/highcharts.js') < html.indexOf('class="frank-chart'));
     assert.match(html, /TRMNLCharts\.watch/);
     assert.match(html, /TRMNLCharts\.paint\("yellow-50"/);
+    assert.match(html, /screen--color-4bwry/);
+    assert.match(html, /bwry \? "#ffff00"/);
     assert.match(html, /if \(!window\.TRMNLCharts \|\| !window\.TRMNLPaint\)/);
     assert.match(html, /class="frank-chart w--full grow/);
     assert.match(html, /DOMContentLoaded/);

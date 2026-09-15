@@ -181,7 +181,7 @@
           if (++tries < 200) setTimeout(attempt, 50);
         })();
       }
-      ready(function () {
+      function build() {
         var el = "{{ id }}";
         var chartHeight = document.getElementById(el).clientHeight || null;
         if (!window.TRMNLCharts || !window.TRMNLPaint) {
@@ -227,6 +227,16 @@
             credits: { enabled: false }
           }));
         });
+      }
+      ready(function () {
+        function afterLayout() {
+          requestAnimationFrame(build);
+        }
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", afterLayout);
+        } else {
+          afterLayout();
+        }
       });
     })();
   </script>

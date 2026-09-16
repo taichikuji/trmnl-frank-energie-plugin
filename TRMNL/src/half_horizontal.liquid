@@ -12,12 +12,12 @@
     <div class="frank-split">
       <div class="frank-mini-grid">
         {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
-        {% render 'price_card', value: p_current_total, caption: current_caption, class: 'frank-card--current bg--yellow text--black', value_class: 'value--small' %}
-        {% render 'price_card', value: p_average_total, caption: 'Daily average', value_class: 'value--small' %}
+        {% render 'price_card', value: p_current_total, caption: current_caption, class: 'frank-card--current bg--yellow text--black', value_class: 'value--small lg:value--large' %}
+        {% render 'price_card', value: p_average_total, caption: 'Daily average' %}
         {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
-        {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--small' %}
+        {% render 'price_card', value: p_lowest_total, caption: low_caption %}
         {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
-        {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--small' %}
+        {% render 'price_card', value: p_highest_total, caption: high_caption %}
       </div>
       {% render 'energy_chart', id: 'frank-chart-half-horizontal', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
     </div>

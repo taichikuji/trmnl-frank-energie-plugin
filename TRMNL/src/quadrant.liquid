@@ -9,12 +9,12 @@
 
   {% if primary_data.size > 0 %}
     {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
-    {% render 'price_card', value: p_current_total, unit: primary_unit, caption: current_caption, class: 'frank-card--current frank-card--compact bg--yellow text--black', value_class: 'value--small' %}
+    {% render 'price_card', value: p_current_total, unit: primary_unit, caption: current_caption, class: 'frank-card--current frank-card--compact bg--yellow text--black', value_class: 'value--small lg:value--xlarge' %}
     <div class="frank-overview">
       {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
-      {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--xsmall' %}
+      {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--xsmall lg:value--small' %}
       {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
-      {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--xsmall' %}
+      {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--xsmall lg:value--small' %}
     </div>
   {% else %}
     <div class="frank-empty"><span class="title lg:title--xlarge">Price data unavailable</span></div>

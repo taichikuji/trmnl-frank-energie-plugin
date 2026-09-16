@@ -44,10 +44,10 @@ test('statistics use the displayed all-in total', async () => {
   expect(html).toMatch(/€0\.6/);
 });
 
-test('constrained layouts keep price text sized for their slots', async () => {
-  for (const mode of ['half_horizontal', 'half_vertical', 'quadrant']) {
-    expect(await render(mode, fixtures.normal)).not.toMatch(/lg:value--/);
-  }
+test('half vertical keeps the current price sized for its narrow slot', async () => {
+  const html = await render('half_vertical', fixtures.normal);
+  expect(html).toMatch(/value--tnums value--large/);
+  expect(html).not.toMatch(/lg:value--xlarge/);
 });
 
 test('full and half layouts use adaptive TRMNL charts', async () => {

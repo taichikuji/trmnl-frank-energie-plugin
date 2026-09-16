@@ -10,7 +10,7 @@
 
   {% if primary_data.size > 0 %}
     {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
-    {% render 'price_card', value: p_current_total, unit: primary_unit, caption: current_caption, class: 'frank-card--current bg--yellow text--black', value_class: 'value--large lg:value--xlarge' %}
+    {% render 'price_card', value: p_current_total, unit: primary_unit, caption: current_caption, class: 'frank-card--current bg--yellow text--black', value_class: 'value--large' %}
     {% render 'energy_chart', id: 'frank-chart-half-vertical', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
     <div class="frank-three-up">
       {% render 'price_card', value: p_average_total, caption: 'Average', value_class: 'value--xsmall lg:value--small' %}

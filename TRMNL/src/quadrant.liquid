@@ -1,6 +1,6 @@
 <div class="layout layout--col gap--distribute frank-board frank-board--quadrant">
-  <div class="frank-heading border--h-50 pb--2">
-    <div class="frank-heading-copy">
+  <div class="frank-heading w--full flex flex--row flex--between flex--nowrap gap--[10px] border--h-50 pb--2">
+    <div class="frank-heading-copy w--min-0">
       <span class="title lg:title--large">{{ primary_label }}</span>
       <span class="label label--small lg:label--base">All-in · {{ primary_unit }}</span>
     </div>
@@ -10,7 +10,7 @@
   {% if primary_data.size > 0 %}
     {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
     {% render 'price_card', value: p_current_total, unit: primary_unit, caption: current_caption, class: 'frank-card--current frank-card--compact bg--yellow text--black', value_class: 'value--small lg:value--xlarge' %}
-    <div class="frank-overview">
+    <div class="frank-overview w--full grid grid--cols-2 gap--xsmall">
       {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
       {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--xsmall lg:value--small' %}
       {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}

@@ -1,7 +1,7 @@
 {% render 'head_assets' %}
 <div class="layout layout--col gap--distribute frank-board frank-board--half_horizontal">
-  <div class="frank-heading border--h-50 pb--2">
-    <div class="frank-heading-copy">
+  <div class="frank-heading w--full flex flex--row flex--between flex--nowrap gap--[10px] border--h-50 pb--2">
+    <div class="frank-heading-copy w--min-0">
       <span class="title lg:title--large">{{ primary_label }} prices</span>
       <span class="label label--small lg:label--base">All-in · {{ primary_unit }}</span>
     </div>
@@ -9,8 +9,8 @@
   </div>
 
   {% if primary_data.size > 0 %}
-    <div class="frank-split">
-      <div class="frank-mini-grid">
+    <div class="frank-split w--full grow grid gap--small">
+      <div class="frank-mini-grid w--full grid grid--cols-2 gap--xsmall">
         {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
         {% render 'price_card', value: p_current_total, caption: current_caption, class: 'frank-card--current bg--yellow text--black', value_class: 'value--small lg:value--large' %}
         {% render 'price_card', value: p_average_total, caption: 'Daily average' %}

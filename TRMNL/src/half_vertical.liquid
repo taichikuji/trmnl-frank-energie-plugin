@@ -1,7 +1,7 @@
 {% render 'head_assets' %}
-<div class="layout layout--col h--full frank-board frank-board--half_vertical">
-  <div class="frank-heading border--h-50 pb--2">
-    <div class="frank-heading-copy">
+<div class="layout layout--col h--full gap--small frank-board frank-board--half_vertical">
+  <div class="frank-heading w--full flex flex--row flex--between flex--nowrap gap--[10px] border--h-50 pb--2">
+    <div class="frank-heading-copy w--min-0">
       <span class="title lg:title--large">{{ primary_label }} prices</span>
       <span class="label label--small lg:label--base">All-in · {{ primary_unit }}</span>
     </div>
@@ -12,7 +12,7 @@
     {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
     {% render 'price_card', value: p_current_total, unit: primary_unit, caption: current_caption, class: 'frank-card--current bg--yellow text--black', value_class: 'value--large' %}
     {% render 'energy_chart', id: 'frank-chart-half-vertical', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
-    <div class="frank-three-up">
+    <div class="frank-three-up w--full grid grid--cols-3 gap--xsmall">
       {% render 'price_card', value: p_average_total, caption: 'Average', value_class: 'value--xsmall lg:value--small' %}
       {% capture low_caption %}Low · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
       {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--xsmall lg:value--small' %}
@@ -20,7 +20,7 @@
       {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--xsmall lg:value--small' %}
     </div>
     {% if secondary_data.size > 0 %}
-      <div class="frank-secondary">
+      <div class="frank-secondary w--full flex flex--row flex--between flex--center-y gap--[10px]">
         <span class="label lg:label--large">{{ secondary_label }}</span>
         <span class="value value--tnums value--xsmall lg:value--small frank-secondary-value">€{{ s_current_total | round: 3 }}</span>
         <span class="label label--small lg:label--base">{{ secondary_unit }}</span>

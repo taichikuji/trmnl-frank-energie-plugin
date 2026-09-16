@@ -131,6 +131,7 @@
   .screen--1bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail,
   .screen--2bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail,
   .screen--4bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail { background: var(--black) !important; }
+  .screen--color-4bwry .frank-card--current .frank-card-rail { background: var(--red) !important; }
   .screen--lg .frank-board { gap: 14px; }
   .screen--lg .frank-overview { gap: 14px; }
   .screen--lg .frank-card { padding: 14px 16px 14px 22px; }
@@ -144,15 +145,14 @@
 
 {% template frank_title_bar %}
   <div class="title_bar">
-    <img class="image image--adaptive" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie">
+    <img class="image" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie logo">
     <span class="title">{{ title | default: 'Frank Energie' | escape }}</span>
-    <span class="instance">{{ instance }}</span>
   </div>
 {% endtemplate %}
 
 {% template price_card %}
   <div class="frank-card {{ class }}">
-    <span class="frank-card-rail {% if class contains 'frank-card--current' %}bg--red{% else %}bg--black{% endif %}"></span>
+    <span class="frank-card-rail {% if class contains 'frank-card--current' %}bg--orange{% else %}bg--black{% endif %}"></span>
     <div>
       <span class="value value--tnums {{ value_class | default: 'value--small lg:value--base' }}">€{{ value | round: 3 }}</span>
       {% if unit != blank %}<span class="label label--small lg:label--base frank-unit">{{ unit }}</span>{% endif %}
@@ -204,7 +204,7 @@
           var bwry = isBwry();
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
           var base = bwry ? "#ffff00" : TRMNLCharts.paint("yellow-50", { el: el });
-          var active = bwry ? "#ff0000" : TRMNLCharts.paint("red-50", { el: el });
+          var active = bwry ? "#ff0000" : TRMNLCharts.paint("orange-50", { el: el });
           var ink = TRMNLPaint.textColor("default", { el: el });
           var points = raw.map(function (point) {
             return { x: point.x, y: point.y, color: point.current ? active : base };

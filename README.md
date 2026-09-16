@@ -16,7 +16,7 @@ Install it [here](https://trmnl.com/recipes/245095)!
 
 ## Local development
 
-Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), select a primary resource in `.trmnlp.yml`, and preview all four layouts. Run the rendering checks with `pnpm test`.
+Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), select a primary resource in `.trmnlp.yml`, and preview all four layouts. Run the rendering checks with `bun test`.
 
 ## References
 
@@ -27,4 +27,3 @@ Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), select a primar
 - [TRMNL X guide](https://trmnl.com/framework/docs/3.3/trmnl_x_guide)
 - [TRMNL color palettes](https://trmnl.com/framework/docs/3.3/color_palettes)
 - [TRMNL adaptive charts](https://trmnl.com/framework/docs/3.3/chart)
-

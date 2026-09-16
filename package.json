@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/render.test.mjs"
+    "test": "bun test ./tests/render.test.mjs"
   },
   "devDependencies": {
     "liquidjs": "10.29.0"

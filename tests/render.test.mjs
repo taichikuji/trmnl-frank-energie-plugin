@@ -1,5 +1,4 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
+import { expect, test } from 'bun:test';
 import { render } from './render.mjs';
 import { fixtures, price } from './fixtures.mjs';
 
@@ -8,24 +7,27 @@ const modes = ['full', 'half_horizontal', 'half_vertical', 'quadrant'];
 for (const mode of modes) {
   test(`${mode}: renders the selected resource and title bar`, async () => {
     const html = await render(mode, fixtures.normal);
-    assert.match(html, /Electricity/);
-    assert.match(html, /€\/kWh/);
-    assert.match(html, /€0\.2/);
-    assert.equal((html.match(/class="layout /g) || []).length, 1);
-    assert.equal((html.match(/class="title_bar"/g) || []).length, 1);
-    assert.doesNotMatch(html, /undefined|NaN|Liquid error/);
+    expect(html).toMatch(/Electricity/);
+    expect(html).toMatch(/€\/kWh/);
+    expect(html).toMatch(/€0\.2/);
+    expect((html.match(/class="layout /g) || []).length).toBe(1);
+    expect((html.match(/class="title_bar"/g) || []).length).toBe(1);
+    expect(html).toMatch(/<img class="image"[^>]+alt="Frank Energie logo">/);
+    expect(html).not.toMatch(/class="instance"|image--adaptive/);
+    expect(html).toMatch(/frank-card-rail bg--orange/);
+    expect(html).not.toMatch(/undefined|NaN|Liquid error/);
   });
 
   test(`${mode}: supports Gas as the primary resource`, async () => {
     const html = await render(mode, fixtures.normal, 'Gas');
-    assert.match(html, /Gas/);
-    assert.match(html, /€\/m³/);
-    assert.match(html, /€1\.2/);
+    expect(html).toMatch(/Gas/);
+    expect(html).toMatch(/€\/m³/);
+    expect(html).toMatch(/€1\.2/);
   });
 
   test(`${mode}: handles unavailable primary data`, async () => {
-    assert.match(await render(mode, fixtures.empty), /Price data unavailable/);
-    assert.match(await render(mode, fixtures.missing), /Price data unavailable/);
+    expect(await render(mode, fixtures.empty)).toMatch(/Price data unavailable/);
+    expect(await render(mode, fixtures.missing)).toMatch(/Price data unavailable/);
   });
 }
 
@@ -38,31 +40,32 @@ test('statistics use the displayed all-in total', async () => {
     gasPrices: []
   } };
   const html = await render('full', data);
-  assert.match(html, /€0\.05/);
-  assert.match(html, /€0\.6/);
+  expect(html).toMatch(/€0\.05/);
+  expect(html).toMatch(/€0\.6/);
 });
 
 test('full and half layouts use adaptive TRMNL charts', async () => {
   for (const mode of ['full', 'half_horizontal', 'half_vertical']) {
     const html = await render(mode, fixtures.normal);
-    assert.ok(html.indexOf('highcharts/12.3.0/highcharts.js') < html.indexOf('class="frank-chart'));
-    assert.match(html, /TRMNLCharts\.watch/);
-    assert.match(html, /TRMNLCharts\.paint\("yellow-50"/);
-    assert.match(html, /screen--color-4bwry/);
-    assert.match(html, /bwry \? "#ffff00"/);
-    assert.match(html, /window\.Highcharts && window\.TRMNLCharts && window\.TRMNLPaint/);
-    assert.equal((html.match(/var bwry = isBwry\(\);/g) || []).length, 2);
-    assert.match(html, /if \(!window\.TRMNLCharts \|\| !window\.TRMNLPaint\)/);
-    assert.match(html, /class="frank-chart w--full grow/);
-    assert.match(html, /DOMContentLoaded/);
-    assert.match(html, /requestAnimationFrame\(build\)/);
-    assert.doesNotMatch(html, /color:\s*["']#000000/);
+    expect(html.indexOf('highcharts/12.3.0/highcharts.js')).toBeLessThan(html.indexOf('class="frank-chart'));
+    expect(html).toMatch(/TRMNLCharts\.watch/);
+    expect(html).toMatch(/TRMNLCharts\.paint\("yellow-50"/);
+    expect(html).toMatch(/TRMNLCharts\.paint\("orange-50"/);
+    expect(html).toMatch(/screen--color-4bwry/);
+    expect(html).toMatch(/bwry \? "#ffff00"/);
+    expect(html).toMatch(/window\.Highcharts && window\.TRMNLCharts && window\.TRMNLPaint/);
+    expect((html.match(/var bwry = isBwry\(\);/g) || []).length).toBe(2);
+    expect(html).toMatch(/if \(!window\.TRMNLCharts \|\| !window\.TRMNLPaint\)/);
+    expect(html).toMatch(/class="frank-chart w--full grow/);
+    expect(html).toMatch(/DOMContentLoaded/);
+    expect(html).toMatch(/requestAnimationFrame\(build\)/);
+    expect(html).not.toMatch(/color:\s*["']#000000/);
   }
-  assert.doesNotMatch(await render('quadrant', fixtures.normal), /Highcharts\.chart/);
+  expect(await render('quadrant', fixtures.normal)).not.toMatch(/Highcharts\.chart/);
 });
 
 test('instance names are escaped', async () => {
   const html = await render('full', fixtures.normal, 'Electricity', '<img src=x>');
-  assert.doesNotMatch(html, /<img src=x>/);
-  assert.match(html, /&lt;img src=x&gt;/);
+  expect(html).not.toMatch(/<img src=x>/);
+  expect(html).toMatch(/&lt;img src=x&gt;/);
 });

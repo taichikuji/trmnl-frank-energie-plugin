@@ -158,6 +158,7 @@
 {% endtemplate %}
 
 {% template energy_chart %}
+  {% assign id = id | append_random %}
   <div id="{{ id }}" class="frank-chart w--full grow {{ chart_class }}"></div>
   <script>
     (function () {

@@ -9,15 +9,15 @@
   </div>
 
   {% if primary_data.size > 0 %}
-    <div class="w--full grow grid gap--small">
+    <div class="w--full h--min-0 grow grid grid--cols-12 gap--small">
       <div class="col--span-5 grid grid--cols-2 gap--xsmall">
-        {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
-        {% render 'price_card', value: p_current_total, caption: current_caption, class: 'inverse', value_class: 'value--small lg:value--large' %}
-        {% render 'price_card', value: p_average_total, caption: 'Daily average' %}
+        {% capture current_caption %}Now · {{ p_delta_percent }}% vs avg{% endcapture %}
+        {% render 'price_card', value: p_current_total, caption: current_caption, class: 'inverse', value_class: 'value--small lg:value--large', padding_class: 'p--1 lg:p--2' %}
+        {% render 'price_card', value: p_average_total, caption: 'Daily average', padding_class: 'p--1 lg:p--2' %}
         {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
-        {% render 'price_card', value: p_lowest_total, caption: low_caption %}
+        {% render 'price_card', value: p_lowest_total, caption: low_caption, padding_class: 'p--1 lg:p--2' %}
         {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
-        {% render 'price_card', value: p_highest_total, caption: high_caption %}
+        {% render 'price_card', value: p_highest_total, caption: high_caption, padding_class: 'p--1 lg:p--2' %}
       </div>
       {% render 'energy_chart', id: 'frank-chart-half-horizontal', chart_class: 'col--span-7', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
     </div>

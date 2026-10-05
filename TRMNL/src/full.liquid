@@ -9,20 +9,18 @@
   </div>
 
   {% if primary_data.size > 0 %}
-    <div class="w--full grid gap--small">
+    <div class="w--full grid grid--cols-9 lg:portrait:grid--cols-2 gap--small">
       {% capture current_caption %}Now · {{ p_current_from_local | date: '%H:%M' }}–{{ p_current_till_local | date: '%H:%M' }}{% endcapture %}
-      {% render 'price_card', value: p_current_total, caption: current_caption, class: 'col--span-4 inverse', value_class: 'value--large lg:value--xlarge' %}
-      <div class="col--span-8 grid grid--cols-3 gap--small">
-        {% render 'price_card', value: p_average_total, caption: 'Daily average', value_class: 'value--small lg:value--large' %}
-        {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
-        {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--small lg:value--large' %}
-        {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
-        {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--small lg:value--large' %}
-      </div>
+      {% render 'price_card', value: p_current_total, caption: current_caption, class: 'col--span-3 lg:portrait:col--span-1 inverse', value_class: 'value--large lg:value--xlarge' %}
+      {% render 'price_card', value: p_average_total, caption: 'Daily average', class: 'col--span-2 lg:portrait:col--span-1', value_class: 'value--small lg:value--large' %}
+      {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
+      {% render 'price_card', value: p_lowest_total, caption: low_caption, class: 'col--span-2 lg:portrait:col--span-1', value_class: 'value--small lg:value--large' %}
+      {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
+      {% render 'price_card', value: p_highest_total, caption: high_caption, class: 'col--span-2 lg:portrait:col--span-1', value_class: 'value--small lg:value--large' %}
     </div>
     {% render 'energy_chart', id: 'frank-chart-full', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
     {% if secondary_data.size > 0 %}
-      <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall border p--2 lg:p--3">
+      <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall outline p--2 lg:p--3">
         <span class="label lg:label--large">{{ secondary_label }} now</span>
         <span class="value value--tnums value--xsmall lg:value--small text--bold">€{{ s_current_total | round: 3 }}</span>
         <span class="label label--small lg:label--base">{{ secondary_unit }} · avg €{{ s_average_total | round: 3 }}</span>

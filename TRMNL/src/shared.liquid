@@ -100,21 +100,24 @@
 
 {% template frank_title_bar %}
   <div class="title_bar">
-    <img class="image" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie logo">
+    <img class="image image--adaptive w--7 h--7" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie logo">
     <span class="title">{{ title | default: 'Frank Energie' | escape }}</span>
   </div>
 {% endtemplate %}
 
 {% template price_card %}
-  <div class="w--full flex flex--col flex--top gap--xsmall border p--2 lg:p--3 {{ class }}">
-    <span class="value value--tnums {{ value_class | default: 'value--small lg:value--base' }}">€{{ value | round: 3 }}</span>
-    <span class="label label--small lg:label--base" data-clamp="1">{{ caption }}</span>
+  <div class="w--full w--min-0 flex flex--col flex--top gap--xsmall outline {{ padding_class | default: 'p--2 lg:p--3' }} {{ class }}">
+    {% comment %}Value fitting measures the intrinsic span against this container.{% endcomment %}
+    <div class="w--full text--center">
+      <span class="value value--tnums {{ value_class | default: 'value--small lg:value--base' }}" data-value-fit="true">€{{ value | round: 3 }}</span>
+    </div>
+    <span class="w--full label label--small lg:label--base flex flex--row flex--center-x" data-clamp="1">{{ caption }}</span>
   </div>
 {% endtemplate %}
 
 {% template energy_chart %}
   {% assign id = id | append_random %}
-  <div id="{{ id }}" class="w--full grow {{ chart_class }}"></div>
+  <div id="{{ id }}" class="w--full w--min-0 h--min-0 grow {{ chart_class }}"></div>
   <script>
     (function () {
       var raw = [

@@ -98,47 +98,6 @@
 </svg>
 {%- endcapture -%}
 
-<style>
-  .frank-heading { align-items: baseline; }
-  .frank-heading-meta { white-space: nowrap; }
-  .frank-overview--full { grid-template-columns: 1.35fr repeat(3, minmax(0, 1fr)); }
-  .frank-card { position: relative; box-sizing: border-box; width: 100%; min-width: 0; padding: 8px 10px 8px 14px; border: 1px solid currentColor; overflow: hidden; }
-  .frank-card-rail { position: absolute; inset: 0 auto 0 0; width: 5px; }
-  .frank-card--current, .frank-card--current .value, .frank-card--current .label { color: var(--black) !important; -webkit-text-fill-color: var(--black) !important; }
-  .frank-card .value { display: block; line-height: 1; white-space: nowrap; }
-  .frank-card--compact .value { display: inline; }
-  .frank-card .frank-unit { margin-left: 3px; }
-  .frank-card .frank-caption { display: block; margin-top: 4px; }
-  .frank-chart { width: 100%; min-height: 0; flex: 1 1 auto; }
-  .frank-secondary { padding: 5px 10px; border: 1px solid currentColor; }
-  .frank-secondary-value { white-space: nowrap; font-weight: bold; }
-  .frank-empty { margin: auto; text-align: center; }
-  .frank-split { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); min-height: 0; }
-  .frank-mini-grid { min-height: 0; }
-  .frank-board--half_horizontal .frank-card { padding: 5px 7px 5px 11px; }
-  .frank-board--half_horizontal .frank-card .frank-caption { margin-top: 2px; }
-  .frank-board--half_vertical .frank-card--current { min-height: 106px; padding: 6px 12px 6px 16px; }
-  .frank-board--half_vertical .frank-chart { min-height: 145px; }
-  .frank-board--quadrant .frank-card--current { min-height: 76px; padding: 6px 10px 6px 14px; }
-  .frank-board--quadrant .frank-heading { gap: 5px; }
-  .screen--1bit:not([class*="screen--color-"]) .frank-card--current,
-  .screen--2bit:not([class*="screen--color-"]) .frank-card--current,
-  .screen--4bit:not([class*="screen--color-"]) .frank-card--current { background: var(--white) !important; background-image: none !important; }
-  .screen--1bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail,
-  .screen--2bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail,
-  .screen--4bit:not([class*="screen--color-"]) .frank-card--current .frank-card-rail { background: var(--black) !important; }
-  .screen--color-4bwry .frank-card--current .frank-card-rail { background: var(--red) !important; }
-  .screen--lg .frank-board { gap: 14px; }
-  .screen--lg .frank-overview { gap: 14px; }
-  .screen--lg .frank-card { padding: 14px 16px 14px 22px; }
-  .screen--lg .frank-card-rail { width: 7px; }
-  .screen--lg .frank-secondary { padding: 10px 16px; }
-  .screen--lg .frank-split { gap: 18px; }
-  .screen--lg .frank-mini-grid, .screen--lg .frank-three-up { gap: 12px; }
-  .screen--lg .frank-board--half_vertical .frank-chart { min-height: 320px; }
-  .screen--lg.screen--portrait .frank-board--full .frank-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-</style>
-
 {% template frank_title_bar %}
   <div class="title_bar">
     <img class="image" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie logo">
@@ -147,19 +106,15 @@
 {% endtemplate %}
 
 {% template price_card %}
-  <div class="frank-card {{ class }}">
-    <span class="frank-card-rail {% if class contains 'frank-card--current' %}bg--orange{% else %}bg--black{% endif %}"></span>
-    <div>
-      <span class="value value--tnums {{ value_class | default: 'value--small lg:value--base' }}">€{{ value | round: 3 }}</span>
-      {% if unit != blank %}<span class="label label--small lg:label--base frank-unit">{{ unit }}</span>{% endif %}
-    </div>
-    <span class="label label--small lg:label--base frank-caption" data-clamp="1">{{ caption }}</span>
+  <div class="w--full flex flex--col flex--top gap--xsmall border p--2 lg:p--3 {{ class }}">
+    <span class="value value--tnums {{ value_class | default: 'value--small lg:value--base' }}">€{{ value | round: 3 }}</span>
+    <span class="label label--small lg:label--base" data-clamp="1">{{ caption }}</span>
   </div>
 {% endtemplate %}
 
 {% template energy_chart %}
   {% assign id = id | append_random %}
-  <div id="{{ id }}" class="frank-chart w--full grow {{ chart_class }}"></div>
+  <div id="{{ id }}" class="w--full grow {{ chart_class }}"></div>
   <script>
     (function () {
       var raw = [
@@ -176,33 +131,15 @@
         (function attempt() {
           if (window.Highcharts && window.TRMNLCharts && window.TRMNLPaint) return callback();
           if (++tries < 200) return setTimeout(attempt, 50);
-          if (window.Highcharts) callback();
         })();
       }
       function build() {
         var el = "{{ id }}";
-        function isBwry() {
-          var chart = document.getElementById(el);
-          var screen = chart && chart.closest(".screen");
-          return screen && screen.classList.contains("screen--color-4bwry");
-        }
-        if (!window.TRMNLCharts || !window.TRMNLPaint) {
-          var bwry = isBwry();
-          return Highcharts.chart(el, {
-            chart: { type: "column", height: null, animation: false, backgroundColor: "transparent", spacing: [4, 4, 2, 4] },
-            plotOptions: { series: { animation: false, enableMouseTracking: false }, column: { borderWidth: 1, borderColor: "#000", pointPadding: 0.04, groupPadding: 0.03 } },
-            series: [{ data: raw.map(function (point) { return { x: point.x, y: point.y, color: point.current ? (bwry ? "#e60012" : "#000") : (bwry ? "#f6d32d" : "#aaa") }; }), showInLegend: false }],
-            xAxis: { type: "datetime", tickPixelInterval: 100, labels: { format: "{value:%H:%M}" }, plotLines: [{ value: {{ local_now_epoch | times: 1000 }}, color: "#000", width: 2, dashStyle: "Dash", zIndex: 5 }] },
-            yAxis: { title: { text: null }, tickAmount: 4, labels: { format: "€{value:.2f}" } },
-            title: { text: null }, tooltip: { enabled: false }, credits: { enabled: false }
-          });
-        }
         TRMNLCharts.watch(el, function () {
-          var bwry = isBwry();
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
-          var base = bwry ? "#ffff00" : TRMNLCharts.paint("yellow-50", { el: el });
-          var active = bwry ? "#ff0000" : TRMNLCharts.paint("orange-50", { el: el });
           var ink = TRMNLPaint.textColor("default", { el: el });
+          var base = TRMNLCharts.paint("yellow-50", { el: el });
+          var active = TRMNLCharts.paint("orange-50", { el: el });
           var points = raw.map(function (point) {
             return { x: point.x, y: point.y, color: point.current ? active : base };
           });
@@ -219,11 +156,7 @@
               labels: { format: "{value:%H:%M}" },
               plotLines: [{ value: {{ local_now_epoch | times: 1000 }}, color: ink, width: px(2), dashStyle: "Dash", zIndex: 5 }]
             },
-            yAxis: {
-              title: { text: null },
-              tickAmount: 4,
-              labels: { format: "€{value:.2f}" }
-            },
+            yAxis: { title: { text: null }, tickAmount: 4, labels: { format: "€{value:.2f}" } },
             title: { text: null },
             tooltip: { enabled: false },
             credits: { enabled: false }
@@ -231,13 +164,10 @@
         });
       }
       ready(function () {
-        function afterLayout() {
-          requestAnimationFrame(build);
-        }
         if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", afterLayout);
+          document.addEventListener("DOMContentLoaded", function () { requestAnimationFrame(build); });
         } else {
-          afterLayout();
+          requestAnimationFrame(build);
         }
       });
     })();

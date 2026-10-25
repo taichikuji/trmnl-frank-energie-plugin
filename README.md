@@ -1,29 +1,33 @@
-# Frank Energie for TRMNL
+# Frank Energie
 
-A TRMNL plugin for today's Frank Energie electricity and gas prices, with full, half and quadrant layouts for TRMNL OG, BWRY and TRMNL X.
+Today's electricity and gas prices on your TRMNL. See the current all-in rate, the day's average, low and high, and an hourly chart with the current period highlighted.
 
-Install it [here](https://trmnl.com/recipes/245095)!
+<a href="https://trmnl.com/recipes/245095"><img width="150" alt="Works with TRMNL" src="https://trmnl.com/images/brand/badges/light/works-with-trmnl/trmnl-badge-works-with-light.svg" /></a>
 
-## Features
+[Install on TRMNL](https://trmnl.com/recipes/245095)
 
-- Current all-in price with the correct €/kWh or €/m³ unit
-- Daily average, lowest and highest prices
-- Hourly price chart with the current period highlighted
-- Electricity or gas as the primary resource
-- Palette-aware rendering for grayscale and BWRY displays
-- Responsive TRMNL X landscape and portrait layouts
-- Clear unavailable-data state
+![Frank Energie electricity prices and hourly chart on TRMNL](TRMNL/media/preview_full.webp)
 
-## Local development
+Recorded demo prices, not current rates. [All layout previews](TRMNL#previews).
 
-Open `TRMNL/` with [TRMNLP](https://github.com/usetrmnl/trmnlp), select a primary resource in `.trmnlp.yml`, and preview all four layouts.
+## Settings
 
-## References
+- **Resource to Display:** Electricity or Gas (defaults to Electricity).
+- No account or personal API key needed.
 
-- [Frank Energie dynamic pricing](https://www.frankenergie.nl/nl/dynamisch-energiecontract)
-- [Frank Energie price API reference](https://indyjonesnl.github.io/frank-energie-price-history/api/)
-- [Home Assistant Frank Energie integration](https://github.com/bajansen/home-assistant-frank_energie/)
-- [TRMNL screen templating](https://docs.trmnl.com/go/private-plugins/templates)
-- [TRMNL X guide](https://trmnl.com/framework/docs/3.3/trmnl_x_guide)
-- [TRMNL color palettes](https://trmnl.com/framework/docs/3.3/color_palettes)
-- [TRMNL adaptive charts](https://trmnl.com/framework/docs/3.3/chart)
+Full, half horizontal, half vertical and quadrant layouts support TRMNL OG, BWRY and TRMNL X, including portrait. Prices use €/kWh for electricity and €/m³ for gas. Data refreshes every 60 minutes.
+
+## Develop locally
+
+Install [trmnlp](https://github.com/usetrmnl/trmnlp), then run from the repository root:
+
+```sh
+cd TRMNL
+trmnlp serve
+```
+
+Set `custom_fields.resource_type` in [TRMNL/.trmnlp.yml](TRMNL/.trmnlp.yml) to `Electricity` or `Gas`. Templates and settings live in [TRMNL/src/](TRMNL/src/); see the [plugin guide](TRMNL) for setup and layout details.
+
+Data from [Frank Energie](https://www.frankenergie.nl/nl/dynamisch-energiecontract)'s public price feed.
+
+[Questions or ideas?](https://github.com/taichikuji/trmnl-frank-energie-plugin/issues) · [License](LICENSE)

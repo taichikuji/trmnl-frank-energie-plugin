@@ -12,7 +12,7 @@ The plugin icon is stored in the TRMNL bundle and referenced from `settings.yml`
 
 ## Previews
 
-Previews use a snapshot of public market prices and do not represent current rates.
+Previews render the current Liquid templates with public market prices recorded for 25 October 2026, at 12:00 CET. They are demo images, not current rates.
 
 | Full View | Half Horizontal View |
 |------------|----------------------|

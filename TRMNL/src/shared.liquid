@@ -18,6 +18,7 @@
 
 {% assign now_epoch = 'now' | date: '%s' | plus: 0 %}
 {% assign utc_offset = trmnl.user.utc_offset | default: 0 | plus: 0 %}
+{% assign chart_timezone = trmnl.user.time_zone_iana | default: '' %}
 {% assign local_now_epoch = now_epoch | plus: utc_offset %}
 {% assign local_time = local_now_epoch | date: '%H:%M' %}
 {% assign local_day = local_now_epoch | date: '%a %d %b' %}
@@ -117,7 +118,6 @@
 
 {% template energy_chart %}
   {% assign id = id | append_random %}
-  {% assign chart_timezone = trmnl.user.time_zone_iana | default: '' %}
   {% assign chart_now_epoch = now_epoch %}
   {% if chart_timezone == blank %}{% assign chart_now_epoch = local_now_epoch %}{% endif %}
   <div id="{{ id }}" class="w--full w--min-0 h--min-0 grow {{ chart_class }}"></div>

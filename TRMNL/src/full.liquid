@@ -18,7 +18,7 @@
       {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
       {% render 'price_card', value: p_highest_total, caption: high_caption, class: 'col--span-2 lg:portrait:col--span-1', value_class: 'value--small lg:value--large' %}
     </div>
-    {% render 'energy_chart', id: 'frank-chart-full', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
+    {% render 'energy_chart', id: 'frank-chart-full', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, chart_timezone: chart_timezone, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
     {% if secondary_data.size > 0 %}
       <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall outline p--2 lg:p--3">
         <span class="label lg:label--large">{{ secondary_label }} now</span>

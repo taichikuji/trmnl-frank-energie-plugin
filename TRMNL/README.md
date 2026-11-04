@@ -38,7 +38,7 @@ Previews render the current Liquid templates with public market prices recorded 
 - **half_vertical.liquid**: Current price, daily chart, three summary metrics and the secondary resource.
 - **quadrant.liquid**: Current, lowest and highest prices without a chart.
 
-The chart uses TRMNL Framework 3.3 paint helpers, so bars, text and grids adapt to grayscale, BWRY, themes and TRMNL X.
+The chart uses TRMNL Framework 3.3 paint helpers, so bars, text and grids adapt to grayscale, BWRY, themes and TRMNL X. The hourly chart uses the account's IANA timezone when available, including daylight-saving transitions; the current UTC offset is used as a fallback.
 
 
 ## Setup

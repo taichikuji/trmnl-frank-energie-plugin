@@ -117,6 +117,9 @@
 
 {% template energy_chart %}
   {% assign id = id | append_random %}
+  {% assign chart_timezone = trmnl.user.time_zone_iana | default: '' %}
+  {% assign chart_now_epoch = now_epoch %}
+  {% if chart_timezone == blank %}{% assign chart_now_epoch = local_now_epoch %}{% endif %}
   <div id="{{ id }}" class="w--full w--min-0 h--min-0 grow {{ chart_class }}"></div>
   <script>
     (function () {
@@ -124,7 +127,8 @@
         {% for item in series %}
           {% assign total = item.marketPrice | plus: item.marketPriceTax | plus: item.sourcingMarkupPrice | plus: item.energyTaxPrice %}
           {% assign from_utc_epoch = item.from | date: '%s' | plus: 0 %}
-          {% assign from_epoch = from_utc_epoch | plus: utc_offset %}
+          {% assign from_epoch = from_utc_epoch %}
+          {% if chart_timezone == blank %}{% assign from_epoch = from_utc_epoch | plus: utc_offset %}{% endif %}
           {% assign till_epoch = item.till | date: '%s' | plus: 0 %}
           { x: {{ from_epoch | times: 1000 }}, y: {{ total | round: 5 }}, current: {% if now_epoch >= from_utc_epoch and now_epoch < till_epoch %}true{% else %}false{% endif %} }{% unless forloop.last %},{% endunless %}
         {% endfor %}
@@ -148,6 +152,7 @@
           });
           return Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
             chart: { type: "column", height: null, spacing: px([4, 4, 2, 4]) },
+            time: { timezone: {{ chart_timezone | default: 'UTC' | json }} },
             plotOptions: {
               series: { animation: false, enableMouseTracking: false },
               column: { borderWidth: px(1), borderColor: ink, pointPadding: 0.04, groupPadding: 0.03 }
@@ -157,7 +162,7 @@
               type: "datetime",
               tickPixelInterval: px(100),
               labels: { format: "{value:%H:%M}" },
-              plotLines: [{ value: {{ local_now_epoch | times: 1000 }}, color: ink, width: px(2), dashStyle: "Dash", zIndex: 5 }]
+              plotLines: [{ value: {{ chart_now_epoch | times: 1000 }}, color: ink, width: px(2), dashStyle: "Dash", zIndex: 5 }]
             },
             yAxis: { title: { text: null }, tickAmount: 4, labels: { format: "€{value:.2f}" } },
             title: { text: null },

@@ -15,7 +15,7 @@ Recorded demo prices, not current rates. [All layout previews](TRMNL/README.md#p
 - **Resource to Display:** Electricity or Gas (defaults to Electricity).
 - No account or personal API key needed.
 
-Full, half horizontal, half vertical and quadrant layouts support TRMNL OG, BWRY and TRMNL X, including portrait. Prices use €/kWh for electricity and €/m³ for gas. Data refreshes every 60 minutes.
+Full, half horizontal, half vertical and quadrant layouts support TRMNL OG and TRMNL X, including portrait. Prices use €/kWh for electricity and €/m³ for gas. Data refreshes every 60 minutes.
 
 ## Develop locally
 

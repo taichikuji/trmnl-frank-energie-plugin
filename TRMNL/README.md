@@ -22,10 +22,6 @@ Previews render the current Liquid templates with public market prices recorded 
 |-------------------|----------------|
 | ![Half Vertical View](media/preview_half_vertical.webp) | ![Quadrant View](media/preview_quadrant.webp) |
 
-| BWRY Full View |
-|----------------|
-| ![BWRY Full View](media/preview_bwry.webp) |
-
 | TRMNL X Landscape | TRMNL X Portrait |
 |-------------------|------------------|
 | ![TRMNL X Landscape](media/preview_trmnl_x.webp) | ![TRMNL X Portrait](media/preview_trmnl_x_portrait.webp) |
@@ -38,7 +34,7 @@ Previews render the current Liquid templates with public market prices recorded 
 - **half_vertical.liquid**: Current price, daily chart, three summary metrics and the secondary resource.
 - **quadrant.liquid**: Current, lowest and highest prices without a chart.
 
-The chart uses TRMNL Framework 3.3 paint helpers, so bars, text and grids adapt to grayscale, BWRY, themes and TRMNL X. The hourly chart uses the account's IANA timezone when available, including daylight-saving transitions; the current UTC offset is used as a fallback.
+The chart uses neutral bars and a solid highlight for the current hour. Its paint follows the TRMNL device and theme. The hourly chart uses the account's IANA timezone when available, including daylight-saving transitions. It falls back to the current UTC offset.
 
 
 ## Setup
@@ -49,6 +45,6 @@ Choose Electricity or Gas, save, and Force Refresh. Public prices are polled dir
 
 The original plugin design, parsing logic and markup are also offered under [CC BY 4.0](../LICENSE), matching [TRMNL’s public plugin license](https://trmnl.com/plugin-license). Third-party content keeps its own terms. For support, [open a GitHub issue](https://github.com/taichikuji/trmnl-frank-energie-plugin/issues).
 
-All four layouts render a native title bar. Display icons are monochrome SVGs, so raster dithering is unnecessary. Data requests run in native polling; no Serverless fetch is needed. Chart IDs use TRMNL’s native `append_random` filter to prevent collisions when multiple instances share a mashup.
+Data requests run in native polling. Chart IDs use TRMNL’s native `append_random` filter to prevent collisions when multiple instances share a mashup.
 
 Before submitting, save each setting in TRMNL, check all four views on OG and X (landscape and portrait), use a public demo preview, and review CHEF feedback. Repository checks and a successful upload do not replace these dashboard checks or human approval.

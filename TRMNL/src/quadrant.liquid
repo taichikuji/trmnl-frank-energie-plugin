@@ -1,20 +1,14 @@
-<div class="layout layout--col h--full gap--space-between">
-  <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall border--h-50 pb--1">
-    <div>
-      <span class="title lg:title--large">{{ primary_label }}</span>
-      <span class="label label--small lg:label--base">All-in · {{ primary_unit }}</span>
-    </div>
-    <span class="label label--small lg:label--base">{{ local_time }}</span>
-  </div>
+<div class="layout layout--col h--full gap--small">
+  {% render 'price_header', title: primary_label, unit: primary_unit, timestamp: local_time %}
 
   {% if primary_data.size > 0 %}
     {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
-    {% render 'price_card', value: p_current_total, caption: current_caption, class: 'inverse', value_class: 'value--small lg:value--xlarge' %}
-    <div class="w--full grid grid--cols-2 gap--xsmall">
+    {% render 'price_card', value: p_current_total, caption: current_caption, class: 'inverse grow basis--0', value_class: 'value--large lg:value--xlarge' %}
+    <div class="w--full grow basis--0 grid grid--cols-2 gap--xsmall">
       {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
-      {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--xsmall lg:value--small' %}
+      {% render 'price_card', value: p_lowest_total, caption: low_caption %}
       {% capture high_caption %}Highest · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
-      {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--xsmall lg:value--small' %}
+      {% render 'price_card', value: p_highest_total, caption: high_caption %}
     </div>
   {% else %}
     <div class="w--full grow flex flex--col flex--center gap">
@@ -22,4 +16,3 @@
     </div>
   {% endif %}
 </div>
-{% render 'frank_title_bar', svg_logo: svg_logo, title: trmnl.plugin_settings.instance_name %}

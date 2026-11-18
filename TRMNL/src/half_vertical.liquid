@@ -1,23 +1,18 @@
 {% render 'head_assets' %}
 <div class="layout layout--col h--full gap--small">
-  <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall border--h-50 pb--2">
-    <div>
-      <span class="title lg:title--large">{{ primary_label }} prices</span>
-      <span class="label label--small lg:label--base">All-in · {{ primary_unit }}</span>
-    </div>
-    <span class="label label--small lg:label--base">{{ local_time }}</span>
-  </div>
+  {% assign heading = primary_label | append: ' prices' %}
+  {% render 'price_header', title: heading, title_class: 'portrait:title--small lg:portrait:title--base', unit: primary_unit, timestamp: local_time %}
 
   {% if primary_data.size > 0 %}
     {% capture current_caption %}Now · {{ p_trend }}{% endcapture %}
     {% render 'price_card', value: p_current_total, caption: current_caption, class: 'inverse', value_class: 'value--large lg:value--xlarge' %}
     {% render 'energy_chart', id: 'frank-chart-half-vertical', series: primary_data, primary_label: primary_label, utc_offset: utc_offset, chart_timezone: chart_timezone, now_epoch: now_epoch, local_now_epoch: local_now_epoch %}
     <div class="w--full grid grid--cols-3 gap--xsmall">
-      {% render 'price_card', value: p_average_total, caption: 'Average', value_class: 'value--xsmall lg:value--small', padding_class: 'p--1 lg:p--2' %}
+      {% render 'price_card', value: p_average_total, caption: 'Average', value_class: 'value--small lg:value--base', padding_class: 'p--1 lg:p--2' %}
       {% capture low_caption %}Low · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
-      {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--xsmall lg:value--small', padding_class: 'p--1 lg:p--2' %}
+      {% render 'price_card', value: p_lowest_total, caption: low_caption, value_class: 'value--small lg:value--base', padding_class: 'p--1 lg:p--2' %}
       {% capture high_caption %}High · {{ p_highest_from_local | date: '%H:%M' }}{% endcapture %}
-      {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--xsmall lg:value--small', padding_class: 'p--1 lg:p--2' %}
+      {% render 'price_card', value: p_highest_total, caption: high_caption, value_class: 'value--small lg:value--base', padding_class: 'p--1 lg:p--2' %}
     </div>
     {% if secondary_data.size > 0 %}
       <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall outline p--2 lg:p--3">
@@ -32,4 +27,3 @@
     </div>
   {% endif %}
 </div>
-{% render 'frank_title_bar', svg_logo: svg_logo, title: trmnl.plugin_settings.instance_name %}

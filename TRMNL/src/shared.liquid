@@ -93,26 +93,29 @@
   <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
 {% endtemplate %}
 
-{%- capture svg_logo -%}
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
-  <path d="M65.5 164.6C31.7 151.3 12.4 121.8 14.1 86 15.7 51.9 43 21.4 77.6 15.2c50.4-9.1 95.9 32.5 91.2 83.4-4.4 49-52.9 81.3-100.5 66.9-.8-.3-1.6-.5-2.8-.9zm8.3-47.2c0 5.9 1.1 12.2-6.1 15.4-.9.4-1.7 3.4-1.2 4.3 1 1.3 3 2.7 4.7 2.7 9 .3 18 .3 26.9 0 1.7 0 4.4-1.7 4.7-3.1.4-1.4-1.6-3.4-2.6-5.1-1.5-2.5-3.9-5-4.2-7.7-.5-7.3-.2-14.6-.2-22V85.8c3.9 0 7.1.1 10.2 0 3.1-.1 5-1.7 5-5s-1.8-4.8-5-4.8H95.7c.7-7.9-1.6-15.3 3-22.2 1.4 2 2.1 4.1 2.8 6.2 1.8 5.4 6 7.4 11.4 5.4 5-1.8 8.2-6.8 7.7-12.1-.5-5.5-4.7-9.7-10.6-10.2-3.6-.2-7.4-.2-11 .1-13.6 1.4-23.5 11.4-25.1 25-.3 2.4-.5 4.9-.8 7.2-3.8 1.6-10.3-1.7-10.6 5-.2 7.8 7.2 4.1 11.3 6.1v30.9z" fill="#000"/>
-</svg>
-{%- endcapture -%}
-
-{% template frank_title_bar %}
-  <div class="title_bar">
-    <img class="image image--adaptive w--7 h--7" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie logo">
-    <span class="title">{{ title | default: 'Frank Energie' | escape }}</span>
+{% template price_header %}
+  {%- capture svg_logo -%}
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+    <path d="M65.5 164.6C31.7 151.3 12.4 121.8 14.1 86 15.7 51.9 43 21.4 77.6 15.2c50.4-9.1 95.9 32.5 91.2 83.4-4.4 49-52.9 81.3-100.5 66.9-.8-.3-1.6-.5-2.8-.9zm8.3-47.2c0 5.9 1.1 12.2-6.1 15.4-.9.4-1.7 3.4-1.2 4.3 1 1.3 3 2.7 4.7 2.7 9 .3 18 .3 26.9 0 1.7 0 4.4-1.7 4.7-3.1.4-1.4-1.6-3.4-2.6-5.1-1.5-2.5-3.9-5-4.2-7.7-.5-7.3-.2-14.6-.2-22V85.8c3.9 0 7.1.1 10.2 0 3.1-.1 5-1.7 5-5s-1.8-4.8-5-4.8H95.7c.7-7.9-1.6-15.3 3-22.2 1.4 2 2.1 4.1 2.8 6.2 1.8 5.4 6 7.4 11.4 5.4 5-1.8 8.2-6.8 7.7-12.1-.5-5.5-4.7-9.7-10.6-10.2-3.6-.2-7.4-.2-11 .1-13.6 1.4-23.5 11.4-25.1 25-.3 2.4-.5 4.9-.8 7.2-3.8 1.6-10.3-1.7-10.6 5-.2 7.8 7.2 4.1 11.3 6.1v30.9z" fill="#000"/>
+  </svg>
+  {%- endcapture -%}
+  <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall border--h-50 py--1">
+    <img class="image image--adaptive w--5 h--5 lg:w--6 lg:h--6 shrink-0" src="data:image/svg+xml;base64,{{ svg_logo | base64_encode }}" alt="Frank Energie">
+    <div class="grow flex flex--row flex--left flex--center-y flex--wrap gap--xsmall">
+      <span class="title lg:title--large {{ title_class }}">{{ title }}</span>
+      <span class="label label--small lg:label--base">All-in · {{ unit }}</span>
+    </div>
+    <span class="label label--small lg:label--base shrink-0">{{ timestamp }}</span>
   </div>
 {% endtemplate %}
 
 {% template price_card %}
-  <div class="w--full w--min-0 flex flex--col flex--top gap--xsmall outline {{ padding_class | default: 'p--2 lg:p--3' }} {{ class }}">
+  <div class="w--full w--min-0 flex flex--col flex--center gap--xsmall outline {{ padding_class | default: 'p--2 lg:p--3' }} {{ class }}">
     {% comment %}Value fitting measures the intrinsic span against this container.{% endcomment %}
     <div class="w--full text--center">
-      <span class="value value--tnums {{ value_class | default: 'value--small lg:value--base' }}" data-value-fit="true">€{{ value | round: 3 }}</span>
+      <span class="value value--tnums {{ value_class | default: 'value--base lg:value--large' }}" data-value-fit="true">€{{ value | round: 3 }}</span>
     </div>
-    <span class="w--full label label--small lg:label--base flex flex--row flex--center-x" data-clamp="1">{{ caption }}</span>
+    <span class="w--full label label--small lg:label--base block text--center" data-clamp="2">{{ caption }}</span>
   </div>
 {% endtemplate %}
 
@@ -145,10 +148,10 @@
         TRMNLCharts.watch(el, function () {
           var px = function (value) { return TRMNLPaint.px(value, { el: el }); };
           var ink = TRMNLPaint.textColor("default", { el: el });
-          var base = TRMNLCharts.paint("yellow-50", { el: el });
-          var active = TRMNLCharts.paint("orange-50", { el: el });
+          // Keep bars neutral when the browser preview switches to the device palette.
+          var base = TRMNLCharts.paint("gray-60", { el: el });
           var points = raw.map(function (point) {
-            return { x: point.x, y: point.y, color: point.current ? active : base };
+            return { x: point.x, y: point.y, color: point.current ? ink : base };
           });
           return Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), {
             chart: { type: "column", height: null, spacing: px([4, 4, 2, 4]) },

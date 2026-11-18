@@ -1,18 +1,13 @@
 {% render 'head_assets' %}
-<div class="layout layout--col h--full gap--space-between">
-  <div class="w--full flex flex--row flex--between flex--center-y gap--xsmall border--h-50 pb--1">
-    <div>
-      <span class="title lg:title--large">{{ primary_label }} prices</span>
-      <span class="label label--small lg:label--base">All-in · {{ primary_unit }}</span>
-    </div>
-    <span class="label label--small lg:label--base">{{ local_time }}</span>
-  </div>
+<div class="layout layout--col h--full gap--small">
+  {% assign heading = primary_label | append: ' prices' %}
+  {% render 'price_header', title: heading, unit: primary_unit, timestamp: local_time %}
 
   {% if primary_data.size > 0 %}
-    <div class="w--full h--min-0 grow grid grid--cols-12 gap--small">
+    <div class="w--full h--min-0 grow grid grid--cols-12 portrait:flex portrait:flex--col gap--small">
       <div class="col--span-5 grid grid--cols-2 gap--xsmall">
         {% capture current_caption %}Now · {{ p_delta_percent }}% vs avg{% endcapture %}
-        {% render 'price_card', value: p_current_total, caption: current_caption, class: 'inverse', value_class: 'value--small lg:value--large', padding_class: 'p--1 lg:p--2' %}
+        {% render 'price_card', value: p_current_total, caption: current_caption, class: 'inverse', padding_class: 'p--1 lg:p--2' %}
         {% render 'price_card', value: p_average_total, caption: 'Daily average', padding_class: 'p--1 lg:p--2' %}
         {% capture low_caption %}Lowest · {{ p_lowest_from_local | date: '%H:%M' }}{% endcapture %}
         {% render 'price_card', value: p_lowest_total, caption: low_caption, padding_class: 'p--1 lg:p--2' %}
@@ -27,4 +22,3 @@
     </div>
   {% endif %}
 </div>
-{% render 'frank_title_bar', svg_logo: svg_logo, title: trmnl.plugin_settings.instance_name %}

@@ -4,7 +4,7 @@
 # Docs: https://help.usetrmnl.com/en/articles/10542599-importing-and-exporting-private-plugins#h_581fb988f0
 #
 ---
-description: Dutch hourly energy prices
+description: Dutch electricity and gas prices
 strategy: polling
 no_screen_padding: 'no'
 dark_mode: 'no'
@@ -32,10 +32,9 @@ custom_fields:
   field_type: author_bio
   name: About This Plugin
   description: >-
-    See Dutch electricity and gas prices on your TRMNL with Frank Energie. Follow today's
-    hourly dynamic energy prices, including the current all-in rate, daily average, lowest
-    and highest rates, and an easy-to-read price chart. The current hour is highlighted so
-    you can tell when energy is relatively expensive or cheap. Switch between electricity and
+    See Dutch electricity and gas prices on your TRMNL with Frank Energie. Follow hourly electricity prices and daily gas prices, including the current all-in rate, daily average, lowest
+    and highest rates, and an easy-to-read price chart. The electricity chart highlights the current hour, making it easier to see
+    when power is relatively expensive or cheap. Switch between electricity and
     gas in the settings to focus on the resource you use most. Prices are shown in euros per
     kWh or cubic metre, using Frank Energie's public market feed. No Frank Energie login or
     personal API key is required. This recipe is most useful for people in the Netherlands
